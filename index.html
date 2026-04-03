@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wander — Roteiros de Viagem com IA</title>
 <meta name="description" content="Crie roteiros de viagem personalizados com inteligência artificial.">
+<!-- Chave do Gemini — troque pelo valor real da sua chave -->
+<meta name="gemini-key" content="AIzaSyBwCgWvKbsRzwpPt3T8EpNlqA-s0l6e7MM">
 
 <!-- SEGURANÇA: Content Security Policy -->
 <!-- Impede injeção de scripts maliciosos (XSS) -->
@@ -13,7 +15,7 @@
   script-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com;
   font-src https://fonts.gstatic.com;
-  connect-src 'self' https://api.anthropic.com https://*.supabase.co;
+  connect-src 'self' https://generativelanguage.googleapis.com https://*.supabase.co;
   img-src 'self' data: https:;
   frame-ancestors 'none';
 ">
@@ -464,10 +466,11 @@ Responda APENAS com JSON válido (sem markdown):
 Inclua ${Math.min(numDays,5)} dias com 4 atividades cada.`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const GEMINI_KEY = document.querySelector('meta[name="gemini-key"]')?.content||'';
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1500,temperature:0.7}})
     });
 
     // SEGURANÇA: Verifica status da resposta
@@ -475,7 +478,7 @@ Inclua ${Math.min(numDays,5)} dias com 4 atividades cada.`;
 
     const data=await res.json();
     clearInterval(iv);
-    let txt=data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    let txt=(data.candidates?.[0]?.content?.parts?.[0]?.text||'').replace(/```json|```/g,'').trim();
 
     // SEGURANÇA: Parse seguro do JSON
     const itin=JSON.parse(txt);
@@ -542,19 +545,19 @@ async function sendChat(){
   document.getElementById('chat-btn').disabled=true;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const GEMINI_KEY2 = document.querySelector('meta[name="gemini-key"]')?.content||'';
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY2}`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:500, // Reduzido para limitar custo
-        system:'Você é assistente de viagens Wander AI. Responda em português, conciso e prático. Máximo 2 parágrafos.',
-        messages:[{role:'user',content:msg}]
+        system_instruction:{parts:[{text:'Você é assistente de viagens Wander AI. Responda em português, conciso e prático. Máximo 2 parágrafos.'}]},
+        contents:[{parts:[{text:msg}]}],
+        generationConfig:{maxOutputTokens:500,temperature:0.7}
       })
     });
     if(!res.ok) throw new Error('API error');
     const data=await res.json();
-    const resposta=data.content.map(c=>c.text||'').join('').trim();
+    const resposta=(data.candidates?.[0]?.content?.parts?.[0]?.text||'Ops! Tente novamente.').trim();
     // SEGURANÇA: textContent evita XSS na resposta da IA
     loadDiv.textContent=resposta;
   }catch(e){
