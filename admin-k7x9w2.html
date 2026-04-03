@@ -3,11 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wander Admin — Painel de Controle</title>
+<title>Wander Admin</title>
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<script>
+(function(){
+  const SENHA = "wander2026"; // << TROQUE POR UMA SENHA FORTE
+  if(sessionStorage.getItem("wander_admin_ok") === "sim") return;
+  document.documentElement.style.visibility = "hidden";
+  window.addEventListener("DOMContentLoaded", function(){
+    let tentativas = 3;
+    function pedir(){
+      if(tentativas <= 0){
+        document.documentElement.style.visibility = "visible";
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#f8f7f4;flex-direction:column;gap:16px"><div style="font-size:52px">🚫</div><div style="font-size:20px;font-weight:600;color:#c0392b">Acesso bloqueado</div><div style="font-size:14px;color:#6b6b66">Muitas tentativas incorretas. Feche esta aba.</div></div>';
+        return;
+      }
+      const aviso = tentativas < 3 ? ' ('+tentativas+' tentativa'+(tentativas>1?'s':'')+' restante'+(tentativas>1?'s':'')+')' : '';
+      const input = prompt("🔐 Wander Admin — Digite a senha:" + aviso);
+      if(input === null){
+        document.documentElement.style.visibility = "visible";
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#f8f7f4;flex-direction:column;gap:16px"><div style="font-size:52px">🔒</div><div style="font-size:18px;font-weight:600;color:#1a1a18">Acesso negado</div><div style="font-size:14px;color:#6b6b66">Feche esta aba.</div></div>';
+        return;
+      }
+      if(input.trim() === SENHA){ sessionStorage.setItem("wander_admin_ok","sim"); document.documentElement.style.visibility="visible"; }
+      else { tentativas--; pedir(); }
+    }
+    pedir();
+  });
+})();
+</script>
+</head>
+<body>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f8f7f4;--s1:#ffffff;--s2:#f1efe8;--s3:#e8e6df;--text:#1a1a18;--muted:#6b6b66;--dim:#a8a8a2;--gold:#b8892e;--gold2:#d4a853;--green:#2d7a4f;--red:#c0392b;--blue:#2563eb;--border:#e2e0d8;--r8:8px;--r12:12px;--ff:'Inter',sans-serif}
+:root{--bg:#f8f7f4;--s1:#ffffff;--s2:#f1efe8;--s3:#e8e6df;--text:#1a1a18;--muted:#6b6b66;--dim:#a8a8a2;--gold:#b8892e;--gold2:#d4a853;--green:#2d7a4f;--red:#c0392b;--border:#e2e0d8;--r8:8px;--r12:12px;--ff:'Inter',sans-serif}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ff);font-size:14px}
 .layout{display:flex;height:100vh;overflow:hidden;position:relative}
 .sidebar{width:220px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
@@ -36,8 +69,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .metric{background:var(--s1);border:1px solid var(--border);border-radius:var(--r12);padding:16px}
 .m-lbl{font-size:11px;color:var(--muted);letter-spacing:.5px;margin-bottom:8px}
 .m-val{font-size:26px;font-weight:600;margin-bottom:4px;line-height:1}
-.m-chg{font-size:11px}
-.up{color:var(--green)}.dn{color:var(--red)}
+.m-chg{font-size:11px}.up{color:var(--green)}.dn{color:var(--red)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r12);padding:18px}
 .card-title{font-size:13px;font-weight:500;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
@@ -54,29 +86,22 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .fi-time{font-size:10px;color:var(--dim);margin-top:2px}
 .srch{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r8);padding:7px 12px;margin-bottom:16px}
 .srch input{background:none;border:none;outline:none;font-family:var(--ff);font-size:13px;color:var(--text);flex:1}
-.srch input::placeholder{color:var(--dim)}
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{font-size:11px;font-weight:500;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);letter-spacing:.3px;white-space:nowrap}
+th{font-size:11px;font-weight:500;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
 td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--s2)}
 .urow{display:flex;align-items:center;gap:8px}
 .uava{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#fff;flex-shrink:0}
-.uname{font-weight:500;font-size:13px}
-.uemail{font-size:11px;color:var(--muted)}
+.uname{font-weight:500;font-size:13px}.uemail{font-size:11px;color:var(--muted)}
 .pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.p-pro{background:#fef3c7;color:#92400e}
-.p-free{background:var(--s2);color:var(--muted)}
-.p-active{background:#d1fae5;color:#065f46}
-.p-canceled{background:#fee2e2;color:#991b1b}
-.p-pending{background:#e0f2fe;color:#075985}
+.p-pro{background:#fef3c7;color:#92400e}.p-free{background:var(--s2);color:var(--muted)}
+.p-active{background:#d1fae5;color:#065f46}.p-canceled{background:#fee2e2;color:#991b1b}.p-pending{background:#e0f2fe;color:#075985}
 .acts{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .act-c{background:var(--s1);border:1px solid var(--border);border-radius:var(--r12);padding:14px 16px;flex:1;min-width:140px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
 .act-c:hover{border-color:var(--gold2);background:#fffbf3}
-.act-ico{font-size:20px}
-.act-t{font-size:12px;font-weight:500}
-.act-s{font-size:11px;color:var(--muted)}
+.act-ico{font-size:20px}.act-t{font-size:12px;font-weight:500}.act-s{font-size:11px;color:var(--muted)}
 .tog{width:34px;height:18px;background:var(--s3);border-radius:9px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none;display:inline-block}
 .tog.on{background:var(--green)}
 .tog::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s}
@@ -86,15 +111,14 @@ tr:hover td{background:var(--s2)}
 .f-in{width:100%;border:1px solid var(--border);border-radius:var(--r8);padding:8px 12px;font-family:var(--ff);font-size:13px;outline:none;background:var(--bg);transition:border-color .15s}
 .f-in:focus{border-color:var(--gold2)}
 .screen{display:none}.screen.on{display:block}
-.modal-bg{display:none;position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;min-height:100vh}
+.modal-bg{display:none;position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:var(--s1);border-radius:var(--r12);padding:24px;width:420px;max-width:90vw;position:relative}
 .modal-title{font-size:16px;font-weight:600;margin-bottom:16px}
 .modal-x{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)}
 #notif{position:absolute;bottom:20px;right:20px;background:var(--text);color:var(--bg);padding:10px 18px;border-radius:20px;font-size:12px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:300}
 </style>
-</head>
-<body>
+
 <div class="layout">
 <div class="sidebar">
   <div class="sb-logo"><div class="sb-logo-t">Wander Admin</div><div class="sb-logo-s">Painel de controle</div></div>
@@ -111,20 +135,19 @@ tr:hover td{background:var(--s2)}
     <div class="sb-sec">Sistema</div>
     <div class="sb-item" onclick="show('config',this)"><span class="sb-ico">⚙️</span>Configurações</div>
     <div class="sb-item" onclick="notify('Dados exportados!')"><span class="sb-ico">📥</span>Exportar dados</div>
+    <div class="sb-item" style="color:var(--red)" onclick="sair()"><span class="sb-ico">🚪</span>Sair do admin</div>
   </div>
   <div class="sb-footer"><div class="sb-user"><div class="sb-ava">AD</div><div><div style="font-weight:500;font-size:12px">Admin</div><div style="font-size:10px;color:var(--dim)">wanderapp.com.br</div></div></div></div>
 </div>
 
 <div class="main">
-
-<!-- DASHBOARD -->
 <div class="screen on" id="sc-dashboard">
   <div class="topbar"><div class="pg-title">Dashboard</div><span style="font-size:11px;color:var(--muted)">3 Abril 2026</span><button class="btn primary" onclick="notify('Relatório exportado!')">↓ Exportar</button></div>
   <div class="content">
     <div class="metrics">
       <div class="metric"><div class="m-lbl">USUÁRIOS TOTAIS</div><div class="m-val">247</div><div class="m-chg up">↑ +18 esta semana</div></div>
       <div class="metric"><div class="m-lbl">ASSINANTES PRO</div><div class="m-val" style="color:var(--gold)">12</div><div class="m-chg up">↑ +3 esta semana</div></div>
-      <div class="metric"><div class="m-lbl">MRR</div><div class="m-val" style="color:var(--green)">R$ 228</div><div class="m-chg up">↑ +R$ 57 vs mês passado</div></div>
+      <div class="metric"><div class="m-lbl">MRR</div><div class="m-val" style="color:var(--green)">R$ 228</div><div class="m-chg up">↑ +R$ 57</div></div>
       <div class="metric"><div class="m-lbl">ROTEIROS GERADOS</div><div class="m-val">1.043</div><div class="m-chg up">↑ +89 esta semana</div></div>
     </div>
     <div class="row2">
@@ -137,8 +160,6 @@ tr:hover td{background:var(--s2)}
     </div>
   </div>
 </div>
-
-<!-- USUÁRIOS -->
 <div class="screen" id="sc-usuarios">
   <div class="topbar"><div class="pg-title">Usuários</div><button class="btn" onclick="openModal('m-invite')">+ Convidar</button><button class="btn primary" onclick="notify('CSV exportado!')">↓ CSV</button></div>
   <div class="content">
@@ -146,14 +167,12 @@ tr:hover td{background:var(--s2)}
       <div class="act-c"><span class="act-ico">👥</span><div><div class="act-t">247 total</div><div class="act-s">+18 esta semana</div></div></div>
       <div class="act-c"><span class="act-ico">⚡</span><div><div class="act-t">12 Pro</div><div class="act-s">4.8% conversão</div></div></div>
       <div class="act-c"><span class="act-ico">😴</span><div><div class="act-t">38 inativos</div><div class="act-s">sem login há 30d</div></div></div>
-      <div class="act-c" onclick="notify('E-mail de reativação enviado!')"><span class="act-ico">📧</span><div><div class="act-t">Reativar inativos</div><div class="act-s">enviar campanha</div></div></div>
+      <div class="act-c" onclick="notify('Campanha enviada!')"><span class="act-ico">📧</span><div><div class="act-t">Reativar inativos</div><div class="act-s">enviar campanha</div></div></div>
     </div>
-    <div class="srch"><span style="color:var(--dim)">🔍</span><input placeholder="Buscar por nome ou email..." oninput="filterUsers(this.value)"/></div>
+    <div class="srch"><span style="color:var(--dim)">🔍</span><input placeholder="Buscar por nome ou email..." oninput="filterUsers(this.value)" maxlength="100"/></div>
     <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Usuário</th><th>Plano</th><th>Roteiros</th><th>Cadastro</th><th>Último acesso</th><th>Ações</th></tr></thead><tbody id="tb-users"></tbody></table></div></div>
   </div>
 </div>
-
-<!-- ROTEIROS -->
 <div class="screen" id="sc-roteiros">
   <div class="topbar"><div class="pg-title">Roteiros gerados</div><button class="btn primary" onclick="notify('Exportado!')">↓ Exportar</button></div>
   <div class="content">
@@ -165,8 +184,6 @@ tr:hover td{background:var(--s2)}
     <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Destino</th><th>Usuário</th><th>Dias</th><th>Orçamento</th><th>Gerado em</th><th>Visível</th></tr></thead><tbody id="tb-itins"></tbody></table></div></div>
   </div>
 </div>
-
-<!-- ASSINATURAS -->
 <div class="screen" id="sc-assinaturas">
   <div class="topbar"><div class="pg-title">Assinaturas</div></div>
   <div class="content">
@@ -179,24 +196,14 @@ tr:hover td{background:var(--s2)}
     <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Usuário</th><th>Plano</th><th>Status</th><th>Valor</th><th>Próx. cobrança</th><th>Desde</th></tr></thead><tbody id="tb-subs"></tbody></table></div></div>
   </div>
 </div>
-
-<!-- ALERTAS -->
 <div class="screen" id="sc-alertas">
   <div class="topbar"><div class="pg-title">Alertas de preço</div></div>
-  <div class="content">
-    <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Usuário</th><th>Rota</th><th>Preço máximo</th><th>Último preço</th><th>Status</th><th>Criado em</th></tr></thead><tbody id="tb-alerts"></tbody></table></div></div>
-  </div>
+  <div class="content"><div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Usuário</th><th>Rota</th><th>Preço máximo</th><th>Último preço</th><th>Status</th><th>Criado em</th></tr></thead><tbody id="tb-alerts"></tbody></table></div></div></div>
 </div>
-
-<!-- DESTINOS -->
 <div class="screen" id="sc-destinos">
   <div class="topbar"><div class="pg-title">Destinos</div><button class="btn primary" onclick="openModal('m-dest')">+ Novo destino</button></div>
-  <div class="content">
-    <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Destino</th><th>País</th><th>Região</th><th>Roteiros</th><th>Preço médio</th><th>Ativo</th></tr></thead><tbody id="tb-dests"></tbody></table></div></div>
-  </div>
+  <div class="content"><div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Destino</th><th>País</th><th>Região</th><th>Roteiros</th><th>Preço médio</th><th>Ativo</th></tr></thead><tbody id="tb-dests"></tbody></table></div></div></div>
 </div>
-
-<!-- SEO -->
 <div class="screen" id="sc-seo">
   <div class="topbar"><div class="pg-title">SEO & Páginas</div><button class="btn primary" onclick="notify('Gerando páginas com IA...')">✨ Gerar com IA</button></div>
   <div class="content">
@@ -208,36 +215,30 @@ tr:hover td{background:var(--s2)}
     <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap"><table><thead><tr><th>Página</th><th>Keyword</th><th>Posição Google</th><th>Visitas/mês</th><th>Conversões</th><th>Status</th></tr></thead><tbody id="tb-seo"></tbody></table></div></div>
   </div>
 </div>
-
-<!-- CONFIG -->
 <div class="screen" id="sc-config">
-  <div class="topbar"><div class="pg-title">Configurações</div><button class="btn primary" onclick="notify('Salvo com sucesso!')">Salvar alterações</button></div>
+  <div class="topbar"><div class="pg-title">Configurações</div><button class="btn primary" onclick="notify('Salvo!')">Salvar alterações</button></div>
   <div class="content">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="card">
-        <div class="card-title">Planos e preços</div>
+      <div class="card"><div class="card-title">Planos e preços</div>
         <div class="form-row"><label class="f-lbl">Preço mensal (R$)</label><input class="f-in" value="29" type="number"/></div>
         <div class="form-row"><label class="f-lbl">Preço anual (R$)</label><input class="f-in" value="228" type="number"/></div>
         <div class="form-row"><label class="f-lbl">Roteiros grátis/mês</label><input class="f-in" value="3" type="number"/></div>
         <div class="form-row"><label class="f-lbl">Chats IA grátis/dia</label><input class="f-in" value="10" type="number"/></div>
       </div>
-      <div class="card">
-        <div class="card-title">Integrações</div>
+      <div class="card"><div class="card-title">Integrações</div>
         <div style="display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:500">Anthropic (Claude AI)</div><div style="font-size:11px;color:var(--muted)">Roteiros e chat</div></div><button class="tog on" onclick="this.classList.toggle('on')"></button></div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:500">Stripe</div><div style="font-size:11px;color:var(--muted)">Pagamentos</div></div><button class="tog on" onclick="this.classList.toggle('on')"></button></div>
           <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:500">Amadeus</div><div style="font-size:11px;color:var(--muted)">Voos reais</div></div><button class="tog" onclick="this.classList.toggle('on')"></button></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0"><div><div style="font-size:13px;font-weight:500">Modo manutenção</div><div style="font-size:11px;color:var(--muted)">Desativa o app</div></div><button class="tog" onclick="this.classList.toggle('on');notify(this.classList.contains('on')?'Manutenção ATIVADA':'Manutenção desativada')"></button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0"><div><div style="font-size:13px;font-weight:500">Modo manutenção</div><div style="font-size:11px;color:var(--muted)">Desativa o app</div></div><button class="tog" onclick="this.classList.toggle('on');notify(this.classList.contains('on')?'⚠️ Manutenção ATIVADA':'Manutenção desativada')"></button></div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">E-mail</div>
-        <div class="form-row"><label class="f-lbl">Remetente</label><input class="f-in" value="oi@wanderapp.com.br"/></div>
+      <div class="card"><div class="card-title">E-mail</div>
+        <div class="form-row"><label class="f-lbl">Remetente</label><input class="f-in" value="oi@wanderapp.com.br" type="email"/></div>
         <div class="form-row"><label class="f-lbl">Nome</label><input class="f-in" value="Wander App"/></div>
         <div class="form-row"><label class="f-lbl">Provedor</label><select class="f-in"><option>Resend</option><option>SendGrid</option><option>Postmark</option></select></div>
       </div>
-      <div class="card">
-        <div class="card-title">Limites de uso</div>
+      <div class="card"><div class="card-title">Limites de uso</div>
         <div class="form-row"><label class="f-lbl">Tokens IA por roteiro</label><input class="f-in" value="1000" type="number"/></div>
         <div class="form-row"><label class="f-lbl">Fotos diário (free)</label><input class="f-in" value="0" type="number"/></div>
         <div class="form-row"><label class="f-lbl">Fotos diário (pro)</label><input class="f-in" value="100" type="number"/></div>
@@ -246,161 +247,49 @@ tr:hover td{background:var(--s2)}
     </div>
   </div>
 </div>
+</div>
 
-</div><!-- /main -->
-
-<!-- MODALS -->
 <div class="modal-bg" id="m-invite" onclick="if(event.target===this)closeModal('m-invite')">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('m-invite')">×</button>
-    <div class="modal-title">Convidar usuário</div>
-    <div class="form-row"><label class="f-lbl">E-mail</label><input class="f-in" placeholder="usuario@email.com"/></div>
-    <div class="form-row"><label class="f-lbl">Plano</label><select class="f-in"><option>Free</option><option>Pro</option></select></div>
-    <button class="btn primary" style="width:100%;padding:10px;margin-top:4px" onclick="closeModal('m-invite');notify('Convite enviado!')">Enviar convite</button>
-  </div>
+  <div class="modal"><button class="modal-x" onclick="closeModal('m-invite')">×</button><div class="modal-title">Convidar usuário</div><div class="form-row"><label class="f-lbl">E-mail</label><input class="f-in" placeholder="usuario@email.com" type="email" maxlength="100"/></div><div class="form-row"><label class="f-lbl">Plano</label><select class="f-in"><option>Free</option><option>Pro</option></select></div><button class="btn primary" style="width:100%;padding:10px;margin-top:4px" onclick="closeModal('m-invite');notify('Convite enviado!')">Enviar convite</button></div>
 </div>
 <div class="modal-bg" id="m-dest" onclick="if(event.target===this)closeModal('m-dest')">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('m-dest')">×</button>
-    <div class="modal-title">Novo destino</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="form-row"><label class="f-lbl">Nome</label><input class="f-in" placeholder="Ex: Lisboa"/></div>
-      <div class="form-row"><label class="f-lbl">País</label><input class="f-in" placeholder="Ex: Portugal"/></div>
-      <div class="form-row"><label class="f-lbl">Região</label><select class="f-in"><option>Europa</option><option>Ásia</option><option>Américas</option><option>África</option><option>Oceania</option></select></div>
-      <div class="form-row"><label class="f-lbl">IATA</label><input class="f-in" placeholder="LIS"/></div>
-    </div>
-    <div class="form-row"><label class="f-lbl">Preço estimado (R$)</label><input class="f-in" type="number" placeholder="7500"/></div>
-    <button class="btn primary" style="width:100%;padding:10px;margin-top:4px" onclick="closeModal('m-dest');notify('Destino adicionado!')">Adicionar</button>
-  </div>
+  <div class="modal"><button class="modal-x" onclick="closeModal('m-dest')">×</button><div class="modal-title">Novo destino</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-row"><label class="f-lbl">Nome</label><input class="f-in" placeholder="Ex: Lisboa" maxlength="50"/></div><div class="form-row"><label class="f-lbl">País</label><input class="f-in" placeholder="Ex: Portugal" maxlength="50"/></div><div class="form-row"><label class="f-lbl">Região</label><select class="f-in"><option>Europa</option><option>Ásia</option><option>Américas</option><option>África</option><option>Oceania</option></select></div><div class="form-row"><label class="f-lbl">IATA</label><input class="f-in" placeholder="LIS" maxlength="3"/></div></div><div class="form-row"><label class="f-lbl">Preço estimado (R$)</label><input class="f-in" type="number" placeholder="7500"/></div><button class="btn primary" style="width:100%;padding:10px;margin-top:4px" onclick="closeModal('m-dest');notify('Destino adicionado!')">Adicionar</button></div>
 </div>
-
 <div id="notif"></div>
 </div>
 
 <script>
-const USERS=[
-  {n:'Ana Souza',e:'ana@gmail.com',plan:'pro',r:18,j:'10/01/2026',l:'hoje',c:'#7c3aed'},
-  {n:'Carlos Lima',e:'carlos@outlook.com',plan:'pro',r:11,j:'15/01/2026',l:'ontem',c:'#b45309'},
-  {n:'Mariana Costa',e:'mari@gmail.com',plan:'free',r:3,j:'20/01/2026',l:'3 dias',c:'#0f766e'},
-  {n:'Pedro Alves',e:'pedro@hotmail.com',plan:'pro',r:22,j:'05/02/2026',l:'hoje',c:'#1d4ed8'},
-  {n:'Julia Santos',e:'julia@gmail.com',plan:'free',r:1,j:'14/02/2026',l:'15 dias',c:'#be185d'},
-  {n:'Rafael Nunes',e:'rafael@icloud.com',plan:'pro',r:9,j:'01/03/2026',l:'hoje',c:'#047857'},
-  {n:'Fernanda Melo',e:'fern@gmail.com',plan:'free',r:3,j:'10/03/2026',l:'2 dias',c:'#b91c1c'},
-  {n:'Lucas Ferreira',e:'lucas@gmail.com',plan:'free',r:2,j:'20/03/2026',l:'1 semana',c:'#7c3aed'},
-];
-const ITINS=[
-  {d:'Paris, França',u:'Ana Souza',dias:7,b:'Moderado',dt:'02/04/2026',pub:true},
-  {d:'Tóquio, Japão',u:'Pedro Alves',dias:14,b:'Premium',dt:'01/04/2026',pub:true},
-  {d:'Roma, Itália',u:'Carlos Lima',dias:5,b:'Econômico',dt:'31/03/2026',pub:false},
-  {d:'Bali',u:'Rafael Nunes',dias:10,b:'Moderado',dt:'30/03/2026',pub:true},
-  {d:'Nova York',u:'Mariana Costa',dias:7,b:'Moderado',dt:'29/03/2026',pub:false},
-];
-const SUBS=[
-  {u:'Ana Souza',e:'ana@gmail.com',p:'Pro Anual',s:'active',v:'R$ 19/mês',n:'10/01/2027',d:'10/01/2026'},
-  {u:'Pedro Alves',e:'pedro@hotmail.com',p:'Pro Anual',s:'active',v:'R$ 19/mês',n:'05/02/2027',d:'05/02/2026'},
-  {u:'Carlos Lima',e:'carlos@outlook.com',p:'Pro Mensal',s:'active',v:'R$ 29/mês',n:'15/04/2026',d:'15/03/2026'},
-  {u:'Rafael Nunes',e:'rafael@icloud.com',p:'Pro Anual',s:'active',v:'R$ 19/mês',n:'01/03/2027',d:'01/03/2026'},
-  {u:'Bruno Dias',e:'bruno@gmail.com',p:'Pro Mensal',s:'canceled',v:'R$ 29/mês',n:'—',d:'10/02/2026'},
-];
-const DESTS=[
-  {n:'Paris',c:'França',r:'Europa',rot:187,p:'R$ 7.400',on:true},
-  {n:'Tóquio',c:'Japão',r:'Ásia',rot:143,p:'R$ 9.200',on:true},
-  {n:'Roma',c:'Itália',r:'Europa',rot:98,p:'R$ 6.800',on:true},
-  {n:'Nova York',c:'EUA',r:'Américas',rot:87,p:'R$ 8.500',on:true},
-  {n:'Bali',c:'Indonésia',r:'Ásia',rot:76,p:'R$ 7.100',on:true},
-  {n:'Lisboa',c:'Portugal',r:'Europa',rot:64,p:'R$ 5.900',on:false},
-];
-const SEO=[
-  {p:'roteiro-paris-7-dias',k:'roteiro paris 7 dias',pos:4,v:320,cv:12,s:'active'},
-  {p:'o-que-fazer-em-toquio',k:'o que fazer em tóquio',pos:8,v:210,cv:7,s:'active'},
-  {p:'roteiro-japao-14-dias',k:'roteiro japão 14 dias',pos:12,v:180,cv:6,s:'active'},
-  {p:'viagem-para-roma',k:'viagem para roma 5 dias',pos:15,v:140,cv:4,s:'active'},
-  {p:'melhor-epoca-bali',k:'melhor época bali',pos:22,v:90,cv:2,s:'indexing'},
-];
-const ALERTS=[
-  {u:'Ana Souza',r:'GRU → NRT',max:'R$ 9.000',last:'R$ 8.700',s:'below',dt:'15/03/2026'},
-  {u:'Pedro Alves',r:'GRU → CDG',max:'R$ 7.500',last:'R$ 8.100',s:'above',dt:'20/03/2026'},
-  {u:'Carlos Lima',r:'VIX → LIS',max:'R$ 6.000',last:'R$ 5.900',s:'below',dt:'01/04/2026'},
-  {u:'Mariana Costa',r:'GRU → BKK',max:'R$ 8.000',last:'—',s:'pending',dt:'02/04/2026'},
-];
-const FEED=[
-  {dot:'#2d7a4f',t:'Ana Souza gerou roteiro para Paris (7 dias)',time:'há 2 min'},
-  {dot:'#b8892e',t:'Novo assinante Pro: Rafael Nunes (R$ 19/mês)',time:'há 18 min'},
-  {dot:'#2563eb',t:'Pedro Alves acessou via SEO',time:'há 34 min'},
-  {dot:'#7c3aed',t:'Julia Santos se cadastrou pelo TikTok',time:'há 1h'},
-  {dot:'#c0392b',t:'Bruno Dias cancelou assinatura Pro',time:'há 3h'},
-  {dot:'#2d7a4f',t:'Carlos Lima criou 3 entradas no diário',time:'há 5h'},
-];
+function sanitize(str){
+  const d=document.createElement('div');
+  d.textContent=String(str||'').slice(0,200);
+  return d.innerHTML;
+}
+const USERS=[{n:'Ana Souza',e:'ana@gmail.com',plan:'pro',r:18,j:'10/01/2026',l:'hoje',c:'#7c3aed'},{n:'Carlos Lima',e:'carlos@outlook.com',plan:'pro',r:11,j:'15/01/2026',l:'ontem',c:'#b45309'},{n:'Mariana Costa',e:'mari@gmail.com',plan:'free',r:3,j:'20/01/2026',l:'3 dias',c:'#0f766e'},{n:'Pedro Alves',e:'pedro@hotmail.com',plan:'pro',r:22,j:'05/02/2026',l:'hoje',c:'#1d4ed8'},{n:'Julia Santos',e:'julia@gmail.com',plan:'free',r:1,j:'14/02/2026',l:'15 dias',c:'#be185d'},{n:'Rafael Nunes',e:'rafael@icloud.com',plan:'pro',r:9,j:'01/03/2026',l:'hoje',c:'#047857'}];
+const ITINS=[{d:'Paris, França',u:'Ana Souza',dias:7,b:'Moderado',dt:'02/04/2026',pub:true},{d:'Tóquio, Japão',u:'Pedro Alves',dias:14,b:'Premium',dt:'01/04/2026',pub:true},{d:'Roma, Itália',u:'Carlos Lima',dias:5,b:'Econômico',dt:'31/03/2026',pub:false},{d:'Bali',u:'Rafael Nunes',dias:10,b:'Moderado',dt:'30/03/2026',pub:true}];
+const SUBS=[{u:'Ana Souza',e:'ana@gmail.com',p:'Pro Anual',s:'active',v:'R$ 19/mês',n:'10/01/2027',d:'10/01/2026'},{u:'Pedro Alves',e:'pedro@hotmail.com',p:'Pro Anual',s:'active',v:'R$ 19/mês',n:'05/02/2027',d:'05/02/2026'},{u:'Carlos Lima',e:'carlos@outlook.com',p:'Pro Mensal',s:'active',v:'R$ 29/mês',n:'15/04/2026',d:'15/03/2026'},{u:'Bruno Dias',e:'bruno@gmail.com',p:'Pro Mensal',s:'canceled',v:'R$ 29/mês',n:'—',d:'10/02/2026'}];
+const DESTS=[{n:'Paris',c:'França',r:'Europa',rot:187,p:'R$ 7.400',on:true},{n:'Tóquio',c:'Japão',r:'Ásia',rot:143,p:'R$ 9.200',on:true},{n:'Roma',c:'Itália',r:'Europa',rot:98,p:'R$ 6.800',on:true},{n:'Nova York',c:'EUA',r:'Américas',rot:87,p:'R$ 8.500',on:true},{n:'Bali',c:'Indonésia',r:'Ásia',rot:76,p:'R$ 7.100',on:true},{n:'Lisboa',c:'Portugal',r:'Europa',rot:64,p:'R$ 5.900',on:false}];
+const SEO=[{p:'roteiro-paris-7-dias',k:'roteiro paris 7 dias',pos:4,v:320,cv:12,s:'active'},{p:'o-que-fazer-em-toquio',k:'o que fazer em tóquio',pos:8,v:210,cv:7,s:'active'},{p:'roteiro-japao-14-dias',k:'roteiro japão 14 dias',pos:12,v:180,cv:6,s:'active'},{p:'viagem-para-roma',k:'viagem para roma 5 dias',pos:15,v:140,cv:4,s:'active'},{p:'melhor-epoca-bali',k:'melhor época bali',pos:22,v:90,cv:2,s:'indexing'}];
+const ALERTS=[{u:'Ana Souza',r:'GRU → NRT',max:'R$ 9.000',last:'R$ 8.700',s:'below',dt:'15/03/2026'},{u:'Pedro Alves',r:'GRU → CDG',max:'R$ 7.500',last:'R$ 8.100',s:'above',dt:'20/03/2026'},{u:'Carlos Lima',r:'VIX → LIS',max:'R$ 6.000',last:'R$ 5.900',s:'below',dt:'01/04/2026'}];
+const FEED=[{dot:'#2d7a4f',t:'Ana Souza gerou roteiro para Paris (7 dias)',time:'há 2 min'},{dot:'#b8892e',t:'Novo assinante Pro: Rafael Nunes',time:'há 18 min'},{dot:'#2563eb',t:'Pedro Alves acessou via SEO',time:'há 34 min'},{dot:'#7c3aed',t:'Julia Santos se cadastrou pelo TikTok',time:'há 1h'},{dot:'#c0392b',t:'Bruno Dias cancelou assinatura Pro',time:'há 3h'}];
 
-function bars(id,data){
-  const el=document.getElementById(id);if(!el)return;
-  const max=Math.max(...data.map(d=>d.v));
-  el.innerHTML=data.map(d=>`<div class="bar-col"><div class="bar${d.hi?' hi':''}" style="height:${Math.round((d.v/max)*72)+8}px"></div><div class="bar-lbl">${d.l}</div></div>`).join('');
-}
-function renderFeed(){
-  const el=document.getElementById('feed');if(!el)return;
-  el.innerHTML=FEED.map(f=>`<div class="fi"><div class="fi-dot" style="background:${f.dot}"></div><div class="fi-body">${f.t}<div class="fi-time">${f.time}</div></div></div>`).join('');
-}
-function renderTopDests(){
-  const el=document.getElementById('top-dests');if(!el)return;
-  const data=[{n:'Paris',v:187},{n:'Tóquio',v:143},{n:'Roma',v:98},{n:'Nova York',v:87},{n:'Bali',v:76}];
-  el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="font-size:13px;width:70px;flex-shrink:0">${d.n}</div><div style="flex:1;background:var(--s2);border-radius:4px;height:8px;overflow:hidden"><div style="background:var(--gold2);height:100%;width:${Math.round((d.v/187)*100)}%;border-radius:4px"></div></div><div style="font-size:12px;color:var(--muted);width:30px;text-align:right">${d.v}</div></div>`).join('');
-}
-
-function renderUsers(filter=''){
-  const b=document.getElementById('tb-users');if(!b)return;
-  const f=USERS.filter(u=>!filter||u.n.toLowerCase().includes(filter.toLowerCase())||u.e.toLowerCase().includes(filter.toLowerCase()));
-  b.innerHTML=f.map(u=>`<tr><td><div class="urow"><div class="uava" style="background:${u.c}">${u.n.split(' ').map(x=>x[0]).join('')}</div><div><div class="uname">${u.n}</div><div class="uemail">${u.e}</div></div></div></td><td><span class="pill ${u.plan==='pro'?'p-pro':'p-free'}">${u.plan==='pro'?'⚡ Pro':'Free'}</span></td><td>${u.r}</td><td style="color:var(--muted)">${u.j}</td><td style="color:var(--muted)">${u.l}</td><td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="notify('E-mail enviado para ${u.n}!')">E-mail</button>${u.plan==='free'?`<button class="btn" style="padding:4px 10px;font-size:11px;margin-left:4px" onclick="notify('${u.n} promovido para Pro!')">→ Pro</button>`:''}</td></tr>`).join('');
-}
-function renderItins(){
-  const b=document.getElementById('tb-itins');if(!b)return;
-  b.innerHTML=ITINS.map(i=>`<tr><td style="font-weight:500">${i.d}</td><td style="color:var(--muted)">${i.u}</td><td>${i.dias} dias</td><td><span class="pill ${i.b==='Premium'?'p-pro':i.b==='Econômico'?'p-free':'p-active'}">${i.b}</span></td><td style="color:var(--muted)">${i.dt}</td><td><span class="pill ${i.pub?'p-active':'p-free'}">${i.pub?'Público':'Privado'}</span></td></tr>`).join('');
-}
-function renderSubs(){
-  const b=document.getElementById('tb-subs');if(!b)return;
-  b.innerHTML=SUBS.map(s=>`<tr><td><div class="urow"><div class="uava" style="background:#b8892e">${s.u.split(' ').map(x=>x[0]).join('')}</div><div><div class="uname">${s.u}</div><div class="uemail">${s.e}</div></div></div></td><td><span class="pill p-pro">${s.p}</span></td><td><span class="pill ${s.s==='active'?'p-active':s.s==='canceled'?'p-canceled':'p-pending'}">${s.s==='active'?'Ativo':s.s==='canceled'?'Cancelado':'Pendente'}</span></td><td style="font-weight:500;color:var(--green)">${s.v}</td><td style="color:var(--muted)">${s.n}</td><td style="color:var(--muted)">${s.d}</td></tr>`).join('');
-}
-function renderDests(){
-  const b=document.getElementById('tb-dests');if(!b)return;
-  b.innerHTML=DESTS.map(d=>`<tr><td style="font-weight:500">${d.n}</td><td style="color:var(--muted)">${d.c}</td><td><span class="pill p-pending">${d.r}</span></td><td>${d.rot}</td><td style="color:var(--green);font-weight:500">${d.p}</td><td><button class="tog ${d.on?'on':''}" onclick="this.classList.toggle('on');notify('${d.n} '+(this.classList.contains('on')?'ativado':'desativado')+'!')"></button></td></tr>`).join('');
-}
-function renderSeo(){
-  const b=document.getElementById('tb-seo');if(!b)return;
-  b.innerHTML=SEO.map(p=>`<tr><td style="font-family:monospace;font-size:12px;color:var(--muted)">${p.p}</td><td style="font-size:12px">${p.k}</td><td><span style="font-weight:500;color:${p.pos<=10?'var(--green)':'var(--muted)'}">#${p.pos}</span></td><td>${p.v}</td><td style="color:var(--green);font-weight:500">${p.cv}</td><td><span class="pill ${p.s==='active'?'p-active':'p-pending'}">${p.s==='active'?'No ar':'Indexando'}</span></td></tr>`).join('');
-}
-function renderAlerts(){
-  const b=document.getElementById('tb-alerts');if(!b)return;
-  b.innerHTML=ALERTS.map(a=>`<tr><td style="font-weight:500">${a.u}</td><td style="font-family:monospace;font-size:12px">${a.r}</td><td>${a.max}</td><td style="font-weight:500;color:${a.s==='below'?'var(--green)':a.s==='above'?'var(--red)':'var(--muted)'}">${a.last}</td><td><span class="pill ${a.s==='below'?'p-active':a.s==='above'?'p-canceled':'p-pending'}">${a.s==='below'?'Abaixo':'Acima do limite'}</span></td><td style="color:var(--muted)">${a.dt}</td></tr>`).join('');
-}
-
-function filterUsers(v){renderUsers(v)}
-
-function show(id,el){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
-  document.getElementById('sc-'+id).classList.add('on');
-  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
-  if(el)el.classList.add('on');
-  if(id==='usuarios')renderUsers();
-  if(id==='roteiros')renderItins();
-  if(id==='assinaturas')renderSubs();
-  if(id==='destinos')renderDests();
-  if(id==='seo')renderSeo();
-  if(id==='alertas')renderAlerts();
-}
-
+function bars(id,data){const el=document.getElementById(id);if(!el)return;const max=Math.max(...data.map(d=>d.v));el.innerHTML=data.map(d=>`<div class="bar-col"><div class="bar${d.hi?' hi':''}" style="height:${Math.round((d.v/max)*72)+8}px"></div><div class="bar-lbl">${sanitize(d.l)}</div></div>`).join('');}
+function renderFeed(){const el=document.getElementById('feed');if(!el)return;el.innerHTML=FEED.map(f=>`<div class="fi"><div class="fi-dot" style="background:${f.dot}"></div><div class="fi-body">${sanitize(f.t)}<div class="fi-time">${sanitize(f.time)}</div></div></div>`).join('');}
+function renderTopDests(){const el=document.getElementById('top-dests');if(!el)return;const data=[{n:'Paris',v:187},{n:'Tóquio',v:143},{n:'Roma',v:98},{n:'Nova York',v:87},{n:'Bali',v:76}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="font-size:13px;width:70px;flex-shrink:0">${sanitize(d.n)}</div><div style="flex:1;background:var(--s2);border-radius:4px;height:8px;overflow:hidden"><div style="background:var(--gold2);height:100%;width:${Math.round((d.v/187)*100)}%;border-radius:4px"></div></div><div style="font-size:12px;color:var(--muted);width:30px;text-align:right">${d.v}</div></div>`).join('');}
+function renderUsers(filter=''){const b=document.getElementById('tb-users');if(!b)return;const f=filter?USERS.filter(u=>u.n.toLowerCase().includes(filter.toLowerCase())||u.e.toLowerCase().includes(filter.toLowerCase())):USERS;b.innerHTML=f.map(u=>`<tr><td><div class="urow"><div class="uava" style="background:${u.c}">${sanitize(u.n.split(' ').map(x=>x[0]).join(''))}</div><div><div class="uname">${sanitize(u.n)}</div><div class="uemail">${sanitize(u.e)}</div></div></div></td><td><span class="pill ${u.plan==='pro'?'p-pro':'p-free'}">${u.plan==='pro'?'⚡ Pro':'Free'}</span></td><td>${u.r}</td><td style="color:var(--muted)">${sanitize(u.j)}</td><td style="color:var(--muted)">${sanitize(u.l)}</td><td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="notify('E-mail enviado!')">E-mail</button>${u.plan==='free'?`<button class="btn" style="padding:4px 10px;font-size:11px;margin-left:4px" onclick="notify('Usuário promovido para Pro!')">→ Pro</button>`:''}</td></tr>`).join('');}
+function renderItins(){const b=document.getElementById('tb-itins');if(!b)return;b.innerHTML=ITINS.map(i=>`<tr><td style="font-weight:500">${sanitize(i.d)}</td><td style="color:var(--muted)">${sanitize(i.u)}</td><td>${i.dias} dias</td><td><span class="pill ${i.b==='Premium'?'p-pro':i.b==='Econômico'?'p-free':'p-active'}">${sanitize(i.b)}</span></td><td style="color:var(--muted)">${sanitize(i.dt)}</td><td><span class="pill ${i.pub?'p-active':'p-free'}">${i.pub?'Público':'Privado'}</span></td></tr>`).join('');}
+function renderSubs(){const b=document.getElementById('tb-subs');if(!b)return;b.innerHTML=SUBS.map(s=>`<tr><td><div class="urow"><div class="uava" style="background:#b8892e">${sanitize(s.u.split(' ').map(x=>x[0]).join(''))}</div><div><div class="uname">${sanitize(s.u)}</div><div class="uemail">${sanitize(s.e)}</div></div></div></td><td><span class="pill p-pro">${sanitize(s.p)}</span></td><td><span class="pill ${s.s==='active'?'p-active':s.s==='canceled'?'p-canceled':'p-pending'}">${s.s==='active'?'Ativo':'Cancelado'}</span></td><td style="font-weight:500;color:var(--green)">${sanitize(s.v)}</td><td style="color:var(--muted)">${sanitize(s.n)}</td><td style="color:var(--muted)">${sanitize(s.d)}</td></tr>`).join('');}
+function renderDests(){const b=document.getElementById('tb-dests');if(!b)return;b.innerHTML=DESTS.map(d=>`<tr><td style="font-weight:500">${sanitize(d.n)}</td><td style="color:var(--muted)">${sanitize(d.c)}</td><td><span class="pill p-pending">${sanitize(d.r)}</span></td><td>${d.rot}</td><td style="color:var(--green);font-weight:500">${sanitize(d.p)}</td><td><button class="tog ${d.on?'on':''}" onclick="this.classList.toggle('on');notify('Destino '+(this.classList.contains('on')?'ativado':'desativado')+'!')"></button></td></tr>`).join('');}
+function renderSeo(){const b=document.getElementById('tb-seo');if(!b)return;b.innerHTML=SEO.map(p=>`<tr><td style="font-family:monospace;font-size:12px;color:var(--muted)">${sanitize(p.p)}</td><td style="font-size:12px">${sanitize(p.k)}</td><td><span style="font-weight:500;color:${p.pos<=10?'var(--green)':'var(--muted)'}">#${p.pos}</span></td><td>${p.v}</td><td style="color:var(--green);font-weight:500">${p.cv}</td><td><span class="pill ${p.s==='active'?'p-active':'p-pending'}">${p.s==='active'?'No ar':'Indexando'}</span></td></tr>`).join('');}
+function renderAlerts(){const b=document.getElementById('tb-alerts');if(!b)return;b.innerHTML=ALERTS.map(a=>`<tr><td style="font-weight:500">${sanitize(a.u)}</td><td style="font-family:monospace;font-size:12px">${sanitize(a.r)}</td><td>${sanitize(a.max)}</td><td style="font-weight:500;color:${a.s==='below'?'var(--green)':a.s==='above'?'var(--red)':'var(--muted)'}">${sanitize(a.last)}</td><td><span class="pill ${a.s==='below'?'p-active':a.s==='above'?'p-canceled':'p-pending'}">${a.s==='below'?'Abaixo':'Acima'}</span></td><td style="color:var(--muted)">${sanitize(a.dt)}</td></tr>`).join('');}
+function filterUsers(v){renderUsers(v.slice(0,100))}
+function show(id,el){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById('sc-'+id).classList.add('on');document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));if(el)el.classList.add('on');if(id==='usuarios')renderUsers();if(id==='roteiros')renderItins();if(id==='assinaturas')renderSubs();if(id==='destinos')renderDests();if(id==='seo')renderSeo();if(id==='alertas')renderAlerts();}
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
-function notify(msg){
-  const n=document.getElementById('notif');
-  n.textContent=msg;n.style.opacity='1';
-  clearTimeout(n._t);n._t=setTimeout(()=>n.style.opacity='0',2400);
-}
-
-// Init
+function notify(msg){const n=document.getElementById('notif');n.textContent=msg;n.style.opacity='1';clearTimeout(n._t);n._t=setTimeout(()=>n.style.opacity='0',2400);}
+function sair(){sessionStorage.removeItem("wander_admin_ok");location.reload();}
 bars('ch-users',[{l:'Seg',v:8},{l:'Ter',v:12},{l:'Qua',v:7},{l:'Qui',v:15},{l:'Sex',v:20,hi:true},{l:'Sáb',v:18},{l:'Dom',v:10}]);
 bars('ch-mrr',[{l:'Nov',v:0},{l:'Dez',v:57},{l:'Jan',v:114},{l:'Fev',v:171},{l:'Mar',v:171},{l:'Abr',v:228,hi:true}]);
-renderFeed();
-renderTopDests();
+renderFeed();renderTopDests();
 </script>
 </body>
 </html>
