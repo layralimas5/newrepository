@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wander — Roteiros de Viagem com IA</title>
+<meta name="description" content="Crie roteiros de viagem personalizados com inteligência artificial. Compare preços de voos, salve memórias e explore destinos incríveis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c18;--s1:#0f1624;--s2:#161f30;--s3:#1c2840;
+  --gold:#d4a853;--gold2:#f0c97a;--sky:#5ca8e8;--mint:#4ecba8;
+  --text:#eceae4;--muted:#7a869c;--dim:#4a5568;
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;
+  --ff:'Outfit',sans-serif;--fh:'Cormorant Garamond',serif
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ff);overflow:hidden}
+.root{height:100vh;display:flex;flex-direction:column;max-width:420px;margin:0 auto;position:relative;overflow:hidden}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:72px}
+.scr::-webkit-scrollbar{display:none}
+.scr.active{transform:translateX(0)}
+.scr.prev{transform:translateX(-30%)}
+.topbar{display:flex;align-items:center;padding:16px 18px 0;gap:10px;flex-shrink:0}
+.logo-txt{font-family:var(--fh);font-size:26px;color:var(--gold);letter-spacing:.5px;flex:1}
+.back-btn{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px 4px 0;line-height:1}
+.page-title{font-size:15px;font-weight:500;flex:1}
+.ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#b8892e);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#1a0e00;cursor:pointer;flex-shrink:0;letter-spacing:.5px}
+.hero{padding:24px 18px 0}
+.hero-sub{font-size:11px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px}
+.hero-h{font-family:var(--fh);font-size:36px;line-height:1.15;margin-bottom:8px;font-weight:400}
+.hero-h b{color:var(--gold);font-weight:600}
+.hero-p{font-size:13px;color:var(--muted);line-height:1.65}
+.srch{margin:18px 18px 0;background:var(--s1);border:1px solid #ffffff12;border-radius:var(--r12);display:flex;align-items:center;gap:10px;padding:11px 14px}
+.srch input{background:none;border:none;outline:none;color:var(--text);font-family:var(--ff);font-size:14px;flex:1}
+.srch input::placeholder{color:var(--dim)}
+.srch-btn{background:var(--gold);color:#1a0e00;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--ff)}
+.chips{display:flex;gap:7px;padding:16px 18px 0;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;background:var(--s1);border:1px solid #ffffff10;border-radius:20px;padding:6px 13px;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;color:var(--muted)}
+.chip:hover,.chip.on{background:var(--gold);color:#1a0e00;border-color:var(--gold);font-weight:500}
+.ai-card{margin:18px 18px 0;background:var(--s1);border:1px solid #d4a85328;border-radius:var(--r16);padding:18px;position:relative;overflow:hidden;cursor:pointer}
+.ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.ai-tag{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+.ai-h{font-family:var(--fh);font-size:22px;margin-bottom:4px;font-weight:400}
+.ai-p{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.ai-go{background:linear-gradient(135deg,var(--gold),#b8892e);color:#1a0e00;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--ff);width:100%}
+.sec{padding:20px 18px 0}
+.sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.sec-hd h3{font-size:14px;font-weight:500}
+.sec-hd a{font-size:12px;color:var(--gold);cursor:pointer}
+.dh{display:flex;gap:11px;padding:0 18px;overflow-x:auto;scrollbar-width:none}
+.dh::-webkit-scrollbar{display:none}
+.dcard-h{flex-shrink:0;width:155px;border-radius:var(--r16);overflow:hidden;cursor:pointer;position:relative;transition:transform .2s}
+.dcard-h:hover{transform:scale(1.02)}
+.dcard-fake{width:155px;height:210px;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;position:relative}
+.dcard-overlay{position:absolute;inset:0;background:linear-gradient(to top,#000d 45%,transparent)}
+.dcard-bg{position:absolute;inset:0}
+.dcard-info{position:relative;z-index:1}
+.dcard-name{font-family:var(--fh);font-size:17px;color:#fff;margin-bottom:2px;font-weight:400}
+.dcard-meta{font-size:11px;color:#ffffff80}
+.hbadge{position:absolute;top:10px;right:10px;background:var(--gold);color:#1a0e00;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;z-index:2;letter-spacing:.5px}
+.feat-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px}
+.feat{background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.feat:hover{background:var(--s2);border-color:#ffffff1c}
+.feat-ico{font-size:20px;margin-bottom:9px}
+.feat-t{font-size:13px;font-weight:500;margin-bottom:3px}
+.feat-s{font-size:11px;color:var(--muted);line-height:1.4}
+.feat-arr{position:absolute;top:13px;right:13px;color:var(--dim);font-size:13px}
+.bnav{position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid #ffffff0f;display:flex;z-index:100}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 14px;cursor:pointer;color:var(--dim);font-size:10px;transition:color .2s}
+.bni.on{color:var(--gold)}
+.bni-ico{font-size:20px;line-height:1}
+.form-blk{padding:0 18px;margin-bottom:14px}
+.form-lbl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;display:block}
+.form-in{width:100%;background:var(--s1);border:1px solid #ffffff10;border-radius:10px;padding:11px 14px;color:var(--text);font-family:var(--ff);font-size:14px;outline:none}
+.form-in:focus{border-color:#ffffff28}
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px;margin-bottom:14px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px;margin-bottom:16px}
+.tag{background:var(--s1);border:1px solid #ffffff10;border-radius:20px;padding:6px 13px;font-size:12px;cursor:pointer;transition:all .2s;color:var(--muted)}
+.tag:hover,.tag.sel{background:var(--gold);color:#1a0e00;border-color:var(--gold);font-weight:500}
+.gen-btn{display:block;margin:0 18px;background:linear-gradient(135deg,var(--gold),#b8892e);color:#1a0e00;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--ff);width:calc(100% - 36px)}
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;padding:40px}
+.spin{width:44px;height:44px;border:2px solid #ffffff10;border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-t{font-size:14px;color:var(--muted);text-align:center}
+.itin-meta{display:flex;gap:8px;padding:12px 18px;flex-wrap:wrap}
+.imeta{background:var(--s1);border:1px solid #ffffff10;border-radius:20px;padding:5px 12px;font-size:11px;color:var(--muted)}
+.imeta.gold{color:var(--gold);border-color:#d4a85330}
+.day-blk{margin:0 18px 14px;background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);overflow:hidden}
+.day-hd{padding:12px 16px;border-bottom:1px solid #ffffff0a;display:flex;justify-content:space-between;align-items:center}
+.day-hd-t{font-size:13px;font-weight:500}
+.day-hd-s{font-size:11px;color:var(--muted)}
+.day-item{padding:11px 16px;border-bottom:1px solid #ffffff07;display:flex;gap:11px;align-items:flex-start}
+.day-item:last-child{border-bottom:none}
+.day-time{font-size:10px;color:var(--gold);font-weight:500;min-width:38px;margin-top:2px}
+.day-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:3px;flex-shrink:0;opacity:.7}
+.day-act{font-size:13px;margin-bottom:2px;line-height:1.4}
+.day-loc{font-size:11px;color:var(--muted)}
+.itin-cta-btn{width:100%;background:var(--s1);border:1px solid #d4a85328;border-radius:12px;padding:13px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--ff);color:var(--gold)}
+.dl-card{background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);display:flex;gap:13px;padding:13px;cursor:pointer;align-items:center;transition:all .2s;margin-bottom:11px}
+.dl-card:hover{border-color:#ffffff1c;background:var(--s2)}
+.dl-ico{width:68px;height:68px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px}
+.dl-name{font-family:var(--fh);font-size:17px;margin-bottom:2px;font-weight:400}
+.dl-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
+.dl-tags{display:flex;gap:5px;flex-wrap:wrap}
+.dl-tag{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--s2);color:var(--muted)}
+.dl-price{font-size:13px;font-weight:500;color:var(--gold);align-self:flex-start;white-space:nowrap;margin-left:auto;padding-left:8px}
+.pcard{margin:0 18px 12px;background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);overflow:hidden}
+.pcard-hd{padding:13px 16px;border-bottom:1px solid #ffffff0a;display:flex;justify-content:space-between;align-items:flex-start}
+.pcard-provider{font-size:14px;font-weight:500;margin-bottom:2px}
+.pcard-sub{font-size:11px;color:var(--muted)}
+.pcard-price{font-size:18px;font-weight:500;color:var(--gold);text-align:right}
+.pcard-pp{font-size:10px;color:var(--muted);text-align:right}
+.pcard-body{padding:13px 16px}
+.prow{display:flex;justify-content:space-between;margin-bottom:7px;font-size:12px}
+.prow:last-child{margin-bottom:0;padding-top:8px;border-top:1px solid #ffffff0a;font-weight:500;font-size:13px}
+.prow span:first-child{color:var(--muted)}
+.pbest{font-size:10px;background:#142a14;color:#6ecb6e;padding:3px 8px;border-radius:8px;margin-bottom:3px;display:inline-block}
+.diary-add{margin:0 18px 14px;background:var(--s1);border:1px dashed #ffffff15;border-radius:var(--r12);padding:20px;text-align:center;cursor:pointer;color:var(--dim);font-size:13px}
+.dcard-v{margin:0 18px 12px;background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);overflow:hidden;cursor:pointer}
+.dcard-top{height:120px;display:flex;align-items:center;justify-content:center;font-size:44px;background:var(--s2)}
+.dcard-body{padding:13px 16px}
+.dcard-date{font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.dcard-title{font-family:var(--fh);font-size:18px;margin-bottom:6px;font-weight:400}
+.dcard-text{font-size:12px;color:var(--muted);line-height:1.65}
+.prof-hero{padding:28px 18px 20px;text-align:center}
+.prof-ava{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a5e1e);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;color:#1a0e00;margin:0 auto 12px}
+.prof-name{font-family:var(--fh);font-size:26px;margin-bottom:4px;font-weight:400}
+.prof-sub{font-size:13px;color:var(--muted)}
+.stats-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 18px 20px}
+.stat{background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);padding:14px;text-align:center}
+.stat-n{font-size:22px;font-weight:500;color:var(--gold);display:block}
+.stat-l{font-size:10px;color:var(--muted);margin-top:2px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #ffffff07;cursor:pointer;font-size:14px}
+.menu-item:hover{background:var(--s1)}
+.m-ico{font-size:17px;width:26px;text-align:center}
+.m-arr{margin-left:auto;color:var(--dim);font-size:14px}
+.chat-box{display:flex;flex-direction:column;gap:12px;padding:14px 18px}
+.msg{max-width:85%;padding:11px 14px;border-radius:14px;font-size:13px;line-height:1.6}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--gold),#b8892e);color:#1a0e00;border-radius:14px 14px 4px 14px}
+.msg.ai{align-self:flex-start;background:var(--s1);border:1px solid #ffffff10;color:var(--text);border-radius:14px 14px 14px 4px}
+.chat-inp-wrap{padding:10px 18px 0;display:flex;gap:9px;align-items:flex-end;flex-shrink:0}
+.chat-inp{flex:1;background:var(--s1);border:1px solid #ffffff12;border-radius:12px;padding:11px 14px;color:var(--text);font-family:var(--ff);font-size:13px;outline:none;resize:none;min-height:44px;max-height:100px;line-height:1.5}
+.chat-send{background:var(--gold);color:#1a0e00;border:none;border-radius:10px;padding:11px 14px;font-size:16px;cursor:pointer;flex-shrink:0;align-self:flex-end}
+.chat-send:disabled{opacity:.4;cursor:not-allowed}
+#toast{position:absolute;bottom:85px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 18px;border-radius:20px;font-size:12px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:999}
+</style>
+</head>
+<body>
+<div class="root" id="app">
+
+<!-- HOME -->
+<div class="scr active" id="s-home">
+  <div class="topbar"><span class="logo-txt">Wander</span><div style="flex:1"></div><div class="ava" onclick="nav('s-perfil')">JS</div></div>
+  <div class="hero">
+    <div class="hero-sub">Bom dia, João</div>
+    <div class="hero-h">Para onde vai sua<br><b>próxima aventura?</b></div>
+    <div class="hero-p">Roteiros com IA, comparador de preços, diário de memórias.</div>
+  </div>
+  <div class="srch"><span style="color:var(--dim);font-size:15px">🔍</span><input placeholder="Destino, país, experiência..." id="home-srch" onkeypress="if(event.key==='Enter')nav('s-destinos')"/><button class="srch-btn" onclick="nav('s-destinos')">Ir</button></div>
+  <div class="chips">
+    <div class="chip on">Todos</div><div class="chip">🏖 Praias</div><div class="chip">🏔 Montanhas</div><div class="chip">🏙 Cidades</div><div class="chip">🌿 Natureza</div><div class="chip">🎭 Cultura</div>
+  </div>
+  <div class="sec" style="padding-top:18px">
+    <div class="ai-card" onclick="nav('s-planner')">
+      <div class="ai-tag"><div class="pulse"></div>IA integrada — Claude</div>
+      <div class="ai-h">Roteiro personalizado</div>
+      <div class="ai-p">Diga seus interesses, datas e orçamento. A IA cria um itinerário completo dia a dia.</div>
+      <button class="ai-go">✨ Criar meu roteiro com IA →</button>
+    </div>
+  </div>
+  <div class="sec"><div class="sec-hd"><h3>Destinos em alta</h3><a onclick="nav('s-destinos')">Ver todos</a></div></div>
+  <div class="dh">
+    <div class="dcard-h" onclick="nav('s-destinos')">
+      <div class="dcard-fake"><div class="dcard-bg" style="background:linear-gradient(160deg,#1a3a5c,#0d2240)"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:.45">🗼</div><div class="dcard-overlay"></div><div class="dcard-info"><div class="dcard-name">Paris</div><div class="dcard-meta">França · 7d</div></div></div><div class="hbadge">POPULAR</div>
+    </div>
+    <div class="dcard-h" onclick="nav('s-destinos')">
+      <div class="dcard-fake"><div class="dcard-bg" style="background:linear-gradient(160deg,#1a2a14,#0d2010)"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:.45">⛩️</div><div class="dcard-overlay"></div><div class="dcard-info"><div class="dcard-name">Japão</div><div class="dcard-meta">Ásia · 14d</div></div></div><div class="hbadge">TOP</div>
+    </div>
+    <div class="dcard-h" onclick="nav('s-destinos')">
+      <div class="dcard-fake"><div class="dcard-bg" style="background:linear-gradient(160deg,#3a1a0a,#2a0e04)"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:.45">🦁</div><div class="dcard-overlay"></div><div class="dcard-info"><div class="dcard-name">Quênia</div><div class="dcard-meta">África · 10d</div></div></div><div class="hbadge">NOVO</div>
+    </div>
+    <div class="dcard-h" onclick="nav('s-destinos')">
+      <div class="dcard-fake"><div class="dcard-bg" style="background:linear-gradient(160deg,#2a1a1a,#1a0a0a)"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:.45">🏛️</div><div class="dcard-overlay"></div><div class="dcard-info"><div class="dcard-name">Roma</div><div class="dcard-meta">Itália · 5d</div></div></div>
+    </div>
+  </div>
+  <div class="sec" style="padding-top:22px"><div class="sec-hd"><h3>Ferramentas</h3></div></div>
+  <div class="feat-g">
+    <div class="feat" onclick="nav('s-precos')"><div class="feat-ico">✈️</div><div class="feat-t">Comparar preços</div><div class="feat-s">Voos e hotéis</div><div class="feat-arr">→</div></div>
+    <div class="feat" onclick="nav('s-diario')"><div class="feat-ico">📓</div><div class="feat-t">Diário</div><div class="feat-s">Suas memórias</div><div class="feat-arr">→</div></div>
+    <div class="feat" onclick="nav('s-planner')"><div class="feat-ico">🗺️</div><div class="feat-t">Planejar</div><div class="feat-s">Roteiro com IA</div><div class="feat-arr">→</div></div>
+    <div class="feat" onclick="nav('s-chat')"><div class="feat-ico">💬</div><div class="feat-t">Assistente IA</div><div class="feat-s">Tire dúvidas</div><div class="feat-arr">→</div></div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="bnav">
+    <div class="bni on" onclick="tabNav(this,'s-home')"><span class="bni-ico">🏠</span>Início</div>
+    <div class="bni" onclick="tabNav(this,'s-destinos')"><span class="bni-ico">🌍</span>Destinos</div>
+    <div class="bni" onclick="tabNav(this,'s-planner')"><span class="bni-ico">✨</span>Planejar</div>
+    <div class="bni" onclick="tabNav(this,'s-diario')"><span class="bni-ico">📓</span>Diário</div>
+    <div class="bni" onclick="tabNav(this,'s-chat')"><span class="bni-ico">💬</span>IA</div>
+  </div>
+</div>
+
+<!-- PLANNER -->
+<div class="scr" id="s-planner">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Criar roteiro com IA</span></div>
+  <div style="padding:14px 18px 4px"><div class="ai-tag" style="margin-bottom:4px"><div class="pulse"></div>Claude AI</div><p style="font-size:12px;color:var(--muted)">Preencha os campos e a IA cria um roteiro completo personalizado para você.</p></div>
+  <div style="height:14px"></div>
+  <div class="form-blk"><label class="form-lbl">Destino</label><input class="form-in" placeholder="Ex: Japão, Europa, Nordeste..." id="pl-dest"/></div>
+  <div class="form-2">
+    <div><label class="form-lbl">Saída</label><input class="form-in" type="date" id="pl-from"/></div>
+    <div><label class="form-lbl">Retorno</label><input class="form-in" type="date" id="pl-to"/></div>
+  </div>
+  <div class="form-blk"><label class="form-lbl">Viajantes</label><input class="form-in" type="number" placeholder="2 pessoas" min="1" id="pl-pax" value="2"/></div>
+  <div class="form-blk"><label class="form-lbl">Observações (opcional)</label><input class="form-in" placeholder="Ex: com crianças, lua de mel..." id="pl-obs"/></div>
+  <div style="padding:0 18px 8px"><span class="form-lbl">Estilo de viagem</span></div>
+  <div class="tags" id="pl-styles">
+    <div class="tag sel" onclick="tTag(this)">🏛 Cultural</div><div class="tag" onclick="tTag(this)">🌿 Natureza</div>
+    <div class="tag" onclick="tTag(this)">🍜 Gastronomia</div><div class="tag" onclick="tTag(this)">🎉 Agito</div>
+    <div class="tag" onclick="tTag(this)">🏖 Praia</div><div class="tag" onclick="tTag(this)">🎒 Mochilão</div>
+    <div class="tag" onclick="tTag(this)">💎 Luxo</div><div class="tag" onclick="tTag(this)">👨‍👩‍👧 Família</div>
+  </div>
+  <div style="padding:0 18px 8px"><span class="form-lbl">Orçamento por pessoa</span></div>
+  <div class="tags" id="pl-budget">
+    <div class="tag sel" onclick="selBudget(this)">💸 Econômico</div>
+    <div class="tag" onclick="selBudget(this)">💰 Moderado</div>
+    <div class="tag" onclick="selBudget(this)">💎 Premium</div>
+  </div>
+  <button class="gen-btn" onclick="generateItinerary()">✨ Gerar meu roteiro</button>
+  <div style="height:20px"></div>
+</div>
+
+<!-- LOADING -->
+<div class="scr" id="s-loading">
+  <div class="topbar"><span class="page-title" style="margin-left:0">Gerando seu roteiro...</span></div>
+  <div class="loader"><div class="spin"></div><div class="load-t" id="load-msg">Analisando seu perfil de viagem...</div></div>
+</div>
+
+<!-- ITINERÁRIO -->
+<div class="scr" id="s-itin">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title" id="it-title">Roteiro</span><span style="font-size:18px;cursor:pointer" onclick="toast('Salvo!')">❤️</span></div>
+  <div class="itin-meta" id="it-meta"></div>
+  <div id="it-content"></div>
+  <div style="padding:0 18px;margin-bottom:20px"><button class="itin-cta-btn" onclick="nav('s-precos')">✈️ Ver voos e hotéis para este destino →</button></div>
+</div>
+
+<!-- DESTINOS -->
+<div class="scr" id="s-destinos">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Explorar destinos</span></div>
+  <div style="padding:12px 18px"><div class="srch" style="margin:0"><span style="color:var(--dim);font-size:14px">🔍</span><input placeholder="Buscar destino..." style="background:none;border:none;outline:none;color:var(--text);font-family:var(--ff);font-size:14px;flex:1" oninput="filterDests(this.value)"/></div></div>
+  <div class="chips" id="dest-chips">
+    <div class="chip on" onclick="filterChip(this,'Todos')">Todos</div>
+    <div class="chip" onclick="filterChip(this,'Europa')">Europa</div>
+    <div class="chip" onclick="filterChip(this,'Ásia')">Ásia</div>
+    <div class="chip" onclick="filterChip(this,'Américas')">Américas</div>
+    <div class="chip" onclick="filterChip(this,'África')">África</div>
+  </div>
+  <div style="padding:0 18px" id="dest-list"></div>
+</div>
+
+<!-- PREÇOS -->
+<div class="scr" id="s-precos">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Comparar preços</span></div>
+  <div style="padding:14px 18px 0">
+    <div style="background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);padding:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px">DE</div><div style="font-size:14px;font-weight:500">São Paulo</div></div>
+        <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px">PARA</div><div style="font-size:14px;font-weight:500">Tóquio</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px">IDA</div><div style="font-size:12px">15/08/25</div></div>
+        <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px">VOLTA</div><div style="font-size:12px">29/08/25</div></div>
+        <div><div style="font-size:10px;color:var(--muted);margin-bottom:4px">PAX</div><div style="font-size:12px">2 pessoas</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pcard"><div class="pcard-hd"><div><div class="pcard-provider">LATAM + Japan Airlines</div><div class="pcard-sub">22h30 · 1 escala</div></div><div><div class="pcard-price">R$ 9.200</div><div class="pcard-pp">por pessoa</div></div></div><div class="pcard-body"><div class="prow"><span>Bagagem</span><span>23kg + mochila</span></div><div class="prow"><span>Refeição</span><span>Inclusa</span></div><div class="prow"><span>Total (2 pax)</span><span>R$ 18.400</span></div></div></div>
+  <div class="pcard"><div class="pcard-hd"><div><div class="pbest">✓ Melhor opção</div><div class="pcard-provider">Emirates</div><div class="pcard-sub">19h45 · Dubai</div></div><div><div class="pcard-price">R$ 8.700</div><div class="pcard-pp">por pessoa</div></div></div><div class="pcard-body"><div class="prow"><span>Bagagem</span><span>30kg + carry-on</span></div><div class="prow"><span>Refeição</span><span>Gourmet inclusa</span></div><div class="prow"><span>Total (2 pax)</span><span>R$ 17.400</span></div></div></div>
+  <div class="pcard" style="margin-bottom:20px"><div class="pcard-hd"><div><div class="pcard-provider">Air China</div><div class="pcard-sub">26h · Pequim</div></div><div><div class="pcard-price">R$ 6.900</div><div class="pcard-pp">por pessoa</div></div></div><div class="pcard-body"><div class="prow"><span>Bagagem</span><span>20kg</span></div><div class="prow"><span>Refeição</span><span>Básica</span></div><div class="prow"><span>Total (2 pax)</span><span>R$ 13.800</span></div></div></div>
+</div>
+
+<!-- DIÁRIO -->
+<div class="scr" id="s-diario">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Diário de viagem</span></div>
+  <div style="padding:12px 18px 14px"><p style="font-size:12px;color:var(--muted)">Suas memórias, organizadas por destino.</p></div>
+  <div class="diary-add" onclick="toast('Adicionar entrada — em breve!')"><div style="font-size:22px;margin-bottom:7px">✍️</div>Adicionar nova memória</div>
+  <div class="dcard-v"><div class="dcard-top">🗼</div><div class="dcard-body"><div class="dcard-date">15 Março 2025 · Paris, França</div><div class="dcard-title">Pôr do sol no Sena</div><div class="dcard-text">Uma tarde mágica caminhando pelas margens do Rio Sena. A luz dourada refletindo na água e o Louvre ao fundo criaram uma cena inesquecível...</div></div></div>
+  <div class="dcard-v"><div class="dcard-top">🍜</div><div class="dcard-body"><div class="dcard-date">22 Janeiro 2025 · Tóquio, Japão</div><div class="dcard-title">Ramen às 2h da manhã</div><div class="dcard-text">Perdido em Shinjuku, encontrei um minúsculo ramen-ya com apenas 8 lugares. O melhor caldo tonkotsu da minha vida...</div></div></div>
+  <div class="dcard-v" style="margin-bottom:20px"><div class="dcard-top">🏔️</div><div class="dcard-body"><div class="dcard-date">10 Outubro 2024 · Cusco, Peru</div><div class="dcard-title">Machu Picchu ao amanhecer</div><div class="dcard-text">Acordei às 4h para pegar o primeiro ônibus. Quando a névoa se dissipou e as ruínas emergiram sob o sol nascente, foi impossível segurar as lágrimas...</div></div></div>
+</div>
+
+<!-- CHAT IA -->
+<div class="scr" id="s-chat" style="padding-bottom:0">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Assistente de viagens</span><div class="pulse" style="margin-left:auto"></div></div>
+  <div style="padding:10px 18px 4px"><p style="font-size:12px;color:var(--muted)">Tire dúvidas, peça dicas — powered by Claude.</p></div>
+  <div class="chat-box" id="chat-msgs">
+    <div class="msg ai">Olá! Sou seu assistente de viagens. Posso ajudar com destinos, vistos, o que levar na mala, melhor época para viajar e muito mais. ✈️</div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="chat-inp-wrap" style="padding-bottom:14px">
+    <textarea class="chat-inp" id="chat-in" placeholder="Pergunte sobre destinos, vistos, dicas..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+    <button class="chat-send" id="chat-btn" onclick="sendChat()">↑</button>
+  </div>
+</div>
+
+<!-- PERFIL -->
+<div class="scr" id="s-perfil">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Meu perfil</span></div>
+  <div class="prof-hero"><div class="prof-ava">JS</div><div class="prof-name">João Silva</div><div class="prof-sub">Viajante desde 2018 · Vitória, ES</div></div>
+  <div class="stats-g">
+    <div class="stat"><span class="stat-n">23</span><div class="stat-l">Países</div></div>
+    <div class="stat"><span class="stat-n">87</span><div class="stat-l">Cidades</div></div>
+    <div class="stat"><span class="stat-n">142k</span><div class="stat-l">km voados</div></div>
+  </div>
+  <div style="border-top:1px solid #ffffff07">
+    <div class="menu-item"><span class="m-ico">❤️</span>Destinos salvos<span class="m-arr">›</span></div>
+    <div class="menu-item"><span class="m-ico">🗺️</span>Meus roteiros<span class="m-arr">›</span></div>
+    <div class="menu-item"><span class="m-ico">📓</span>Diário de viagem<span class="m-arr">›</span></div>
+    <div class="menu-item"><span class="m-ico">⚡</span>Wander Pro<span style="font-size:10px;background:#2a1a00;color:var(--gold);padding:2px 8px;border-radius:8px;margin-left:8px">UPGRADE</span><span class="m-arr">›</span></div>
+    <div class="menu-item"><span class="m-ico">⚙️</span>Configurações<span class="m-arr">›</span></div>
+    <div class="menu-item" style="color:#e87e7e"><span class="m-ico">🚪</span>Sair</div>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<div id="toast"></div>
+</div>
+
+<script>
+const DESTS=[
+  {name:'Paris',region:'Europa',country:'França',ico:'🗼',tags:['Cultura','Romance','Gastronomia'],price:'R$ 7.400',bg:'#1a3a5c'},
+  {name:'Tóquio',region:'Ásia',country:'Japão',ico:'⛩️',tags:['Tecnologia','Culinária','Natureza'],price:'R$ 9.200',bg:'#1a2a14'},
+  {name:'Nairobi',region:'África',country:'Quênia',ico:'🦁',tags:['Safari','Natureza','Aventura'],price:'R$ 12.000',bg:'#3a2000'},
+  {name:'Roma',region:'Europa',country:'Itália',ico:'🏛️',tags:['História','Arte','Gastronomia'],price:'R$ 6.800',bg:'#2a1a1a'},
+  {name:'Nova York',region:'Américas',country:'EUA',ico:'🗽',tags:['Compras','Shows','Museus'],price:'R$ 8.500',bg:'#0a1a2a'},
+  {name:'Sydney',region:'Oceania',country:'Austrália',ico:'🦘',tags:['Praia','Natureza','Aventura'],price:'R$ 11.300',bg:'#001a2a'},
+  {name:'Buenos Aires',region:'Américas',country:'Argentina',ico:'🥩',tags:['Tango','Gastronomia','Arte'],price:'R$ 4.200',bg:'#2a1a2a'},
+  {name:'Lisboa',region:'Europa',country:'Portugal',ico:'🏰',tags:['História','Gastronomia','Mar'],price:'R$ 5.900',bg:'#1a1a3a'},
+  {name:'Bangkok',region:'Ásia',country:'Tailândia',ico:'🛕',tags:['Templos','Comida','Praias'],price:'R$ 6.400',bg:'#2a1a00'},
+];
+
+let history=[];
+let currentChip='Todos';
+
+function renderDests(filter='',chip='Todos'){
+  const list=document.getElementById('dest-list');
+  const filtered=DESTS.filter(d=>(chip==='Todos'||d.region===chip)&&(!filter||d.name.toLowerCase().includes(filter.toLowerCase())||d.country.toLowerCase().includes(filter.toLowerCase())));
+  list.innerHTML=filtered.map(d=>`<div class="dl-card" onclick="nav('s-planner')"><div class="dl-ico" style="background:${d.bg}">${d.ico}</div><div style="flex:1;min-width:0"><div class="dl-name">${d.name}</div><div class="dl-meta">${d.country} · ${d.region}</div><div class="dl-tags">${d.tags.map(t=>`<span class="dl-tag">${t}</span>`).join('')}</div></div><div class="dl-price">${d.price}</div></div>`).join('');
+}
+renderDests();
+
+function filterDests(v){renderDests(v,currentChip)}
+function filterChip(el,chip){
+  document.querySelectorAll('#dest-chips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');currentChip=chip;renderDests('',chip);
+}
+
+function nav(id){
+  const cur=document.querySelector('.scr.active');
+  if(cur&&cur.id!==id){history.push(cur.id);cur.classList.remove('active');cur.classList.add('prev');setTimeout(()=>cur.classList.remove('prev'),350);document.getElementById(id).classList.add('active');}
+}
+function back(){
+  if(!history.length)return;
+  const prev=history.pop();
+  document.querySelector('.scr.active')?.classList.remove('active');
+  document.getElementById(prev).classList.add('active');
+}
+function tabNav(el,id){
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');history=[];
+  document.querySelector('.scr.active')?.classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function tTag(el){el.classList.toggle('sel')}
+function selBudget(el){
+  document.querySelectorAll('#pl-budget .tag').forEach(t=>t.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+const loadMsgs=['Analisando seu perfil de viagem...','Pesquisando os melhores pontos...','Montando dia a dia do roteiro...','Adicionando dicas locais...'];
+
+async function generateItinerary(){
+  const dest=document.getElementById('pl-dest').value.trim()||'Europa';
+  const from=document.getElementById('pl-from').value;
+  const to=document.getElementById('pl-to').value;
+  const pax=document.getElementById('pl-pax').value||2;
+  const obs=document.getElementById('pl-obs').value;
+  const styles=[...document.querySelectorAll('#pl-styles .tag.sel')].map(t=>t.textContent.trim().slice(2)).join(', ');
+  const budget=[...document.querySelectorAll('#pl-budget .tag.sel')].map(t=>t.textContent.trim().slice(2)).join('');
+  let numDays=7;
+  if(from&&to){const d=(new Date(to)-new Date(from))/86400000;numDays=Math.max(1,Math.round(d))||7}
+  nav('s-loading');
+  let mi=0;
+  const iv=setInterval(()=>{document.getElementById('load-msg').textContent=loadMsgs[mi%loadMsgs.length];mi++;},1100);
+  const prompt=`Você é especialista em viagens. Crie roteiro para:
+- Destino: ${dest}, Duração: ${numDays} dias, Viajantes: ${pax}
+- Estilo: ${styles||'cultural'}, Orçamento: ${budget||'moderado'}
+${obs?'- Observações: '+obs:''}
+Responda APENAS com JSON válido (sem markdown):
+{"destino":"nome","resumo":"frase resumo","dias":[{"dia":1,"titulo":"título criativo","atividades":[{"hora":"09:00","atividade":"nome","local":"local","dica":"dica rápida"}]}]}
+Inclua ${Math.min(numDays,5)} dias com 4 atividades cada.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    clearInterval(iv);
+    let txt=data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    renderItinerary(JSON.parse(txt),dest,numDays,styles,budget);
+  }catch(e){
+    clearInterval(iv);
+    renderItinerary(makeFallback(dest,numDays),dest,numDays,styles,budget);
+  }
+}
+
+function makeFallback(dest,days){
+  const acts=[['Café da manhã no mercado local','Visita ao museu principal','Almoço típico','Passeio pelo centro histórico'],['Ponto turístico #1','Tour gastronômico','Visita cultural guiada','Jantar com vista'],['Bairro alternativo','Street food no mercado','Passeio na natureza','Pôr do sol no mirante'],['Aula de culinária local','Degustação de vinhos','Compras no mercado','Espetáculo noturno'],['Manhã livre','Última visita imperdível','Almoço de despedida','Compras de última hora']];
+  const locs=['Centro Histórico','Museu Nacional','Bairro Gastronômico','Parque Nacional'];
+  const times=['09:00','11:30','13:30','16:00'];
+  return{destino:dest,resumo:`Uma viagem incrível de ${days} dias por ${dest}`,dias:Array.from({length:Math.min(days,5)},(_,i)=>({dia:i+1,titulo:['Chegada e Exploração','Imersão Cultural','Natureza e Gastronomia','Experiências Únicas','Despedida'][i],atividades:acts[i].map((a,j)=>({hora:times[j],atividade:a,local:locs[j]||'Local Especial',dica:'Dica local exclusiva'}))}))};
+}
+
+function renderItinerary(itin,dest,numDays,styles,budget){
+  document.getElementById('it-title').textContent='Roteiro — '+(itin.destino||dest);
+  document.getElementById('it-meta').innerHTML=`<span class="imeta">${numDays} dias</span><span class="imeta">${budget||'Moderado'}</span><span class="imeta gold">${styles||'Cultural'}</span>`;
+  document.getElementById('it-content').innerHTML=itin.dias.map(d=>`<div class="day-blk"><div class="day-hd"><div class="day-hd-t">Dia ${d.dia} — ${d.titulo}</div><div class="day-hd-s">${itin.destino||dest}</div></div>${d.atividades.map(a=>`<div class="day-item"><div class="day-time">${a.hora}</div><div class="day-dot"></div><div><div class="day-act">${a.atividade}</div><div class="day-loc">📍 ${a.local} · 💡 ${a.dica}</div></div></div>`).join('')}</div>`).join('');
+  nav('s-itin');
+}
+
+async function sendChat(){
+  const inp=document.getElementById('chat-in');
+  const msg=inp.value.trim();
+  if(!msg||document.getElementById('chat-btn').disabled)return;
+  inp.value='';
+  const msgs=document.getElementById('chat-msgs');
+  msgs.innerHTML+=`<div class="msg user">${msg}</div>`;
+  const loadId='l'+Date.now();
+  msgs.innerHTML+=`<div class="msg ai" id="${loadId}" style="color:var(--muted)">✦ Pensando...</div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  document.getElementById('chat-btn').disabled=true;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Você é assistente especialista em viagens chamado Wander AI. Responda em português, de forma concisa, amigável e prática. Máximo 3 parágrafos.',messages:[{role:'user',content:msg}]})});
+    const data=await res.json();
+    document.getElementById(loadId).outerHTML=`<div class="msg ai">${data.content.map(c=>c.text||'').join('').trim().replace(/\n/g,'<br>')}</div>`;
+  }catch(e){
+    document.getElementById(loadId).textContent='Ops! Tente novamente.';
+  }
+  document.getElementById('chat-btn').disabled=false;
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2200);
+}
+
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',function(){
+  this.closest('.chips').querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+  this.classList.add('on');
+}));
+</script>
+</body>
+</html>
