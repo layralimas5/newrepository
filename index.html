@@ -7,6 +7,9 @@
 <meta name="description" content="Crie roteiros de viagem personalizados com inteligência artificial.">
 <!-- Chave do Gemini — troque pelo valor real da sua chave -->
 <meta name="gemini-key" content="AIzaSyBwCgWvKbsRzwpPt3T8EpNlqA-s0l6e7MM">
+<!-- Supabase — cole sua URL e anon key -->
+<meta name="supabase-url" content="https://hwnjwqqweetlrhwbsmzm.supabase.co">
+<meta name="supabase-key" content="sb_publishable_E6wp3hXcH6nL05OMqXqqaQ_F8C3rpC6">
 
 <!-- SEGURANÇA: Content Security Policy -->
 <!-- Impede injeção de scripts maliciosos (XSS) -->
@@ -335,6 +338,36 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div style="height:20px"></div>
 </div>
 
+<!-- TELA DE LOGIN -->
+<div class="scr" id="s-login">
+  <div style="padding:40px 18px 0;text-align:center">
+    <div style="font-family:var(--fh);font-size:42px;color:var(--gold);margin-bottom:8px">Wander</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:40px">Planeje viagens incríveis com IA</div>
+  </div>
+  <div style="padding:0 18px;display:flex;flex-direction:column;gap:12px">
+    <!-- Login Google -->
+    <button onclick="loginGoogle()" style="width:100%;background:#fff;color:#3c3c3c;border:1px solid #dadce0;border-radius:12px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--ff);display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2.04a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.48A4.8 4.8 0 0 1 4.5 7.5V5.43H1.83a8 8 0 0 0 0 7.12z"/><path fill="#EA4335" d="M8.98 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A8 8 0 0 0 1.83 5.43L4.5 7.5c.68-2.05 2.6-3.92 4.48-3.92z"/></svg>
+      Continuar com Google
+    </button>
+    <!-- Login Facebook -->
+    <button onclick="loginFacebook()" style="width:100%;background:#1877f2;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--ff);display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Continuar com Facebook
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;margin:4px 0">
+      <div style="flex:1;height:1px;background:#ffffff15"></div>
+      <span style="font-size:12px;color:var(--dim)">ou</span>
+      <div style="flex:1;height:1px;background:#ffffff15"></div>
+    </div>
+    <!-- Login Email -->
+    <input class="form-in" type="email" id="login-email" placeholder="Seu e-mail" maxlength="100"/>
+    <input class="form-in" type="password" id="login-pass" placeholder="Senha" maxlength="100"/>
+    <button onclick="loginEmail()" style="width:100%;background:linear-gradient(135deg,var(--gold),#b8892e);color:#1a0e00;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--ff)">Entrar</button>
+    <div style="text-align:center;font-size:12px;color:var(--muted)">
+      Não tem conta? <span onclick="showCadastro()" style="color:var(--gold);cursor:pointer">Criar grátis</span>
+    </div>
+  </div>
 <div id="toast"></div>
 </div>
 
@@ -382,7 +415,8 @@ const DESTS=[
   {name:'Bangkok',region:'Ásia',country:'Tailândia',ico:'🛕',tags:['Templos','Comida','Praias'],price:'R$ 6.400',bg:'#2a1a00'},
 ];
 
-let history=[];
+// Renomear para não conflitar com window.history
+let navHistory=[];
 let currentChip='Todos';
 
 function renderDests(filter='',chip='Todos'){
@@ -410,20 +444,90 @@ function filterChip(el,chip){
 
 function nav(id){
   const cur=document.querySelector('.scr.active');
-  if(cur&&cur.id!==id){history.push(cur.id);cur.classList.remove('active');cur.classList.add('prev');setTimeout(()=>cur.classList.remove('prev'),350);document.getElementById(id).classList.add('active');}
+  if(cur&&cur.id!==id){
+    navHistory.push(cur.id);
+    window.history.pushState({screen:id},'','#'+id);
+    cur.classList.remove('active');
+    cur.classList.add('prev');
+    setTimeout(()=>cur.classList.remove('prev'),350);
+    document.getElementById(id).classList.add('active');
+  }
 }
 function back(){
-  if(!history.length)return;
-  const prev=history.pop();
-  document.querySelector('.scr.active')?.classList.remove('active');
-  document.getElementById(prev).classList.add('active');
+  if(navHistory.length){
+    window.history.back();
+  }
 }
 function tabNav(el,id){
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on'); history=[];
+  el.classList.add('on');
+  navHistory=[];
+  window.history.pushState({screen:id},'','#'+id);
   document.querySelector('.scr.active')?.classList.remove('active');
   document.getElementById(id).classList.add('active');
 }
+
+// Botão voltar do browser funciona
+window.addEventListener('popstate',function(e){
+  const targetId=e.state?.screen||(navHistory.length?navHistory.pop():'s-home');
+  document.querySelector('.scr.active')?.classList.remove('active');
+  const t=document.getElementById(targetId);
+  if(t)t.classList.add('active');
+});
+window.history.replaceState({screen:'s-home'},'','#s-home');
+
+// ============================================================
+// LOGIN SOCIAL — Google, Facebook e E-mail via Supabase
+// ============================================================
+const SB_URL = document.querySelector('meta[name="supabase-url"]')?.content||'';
+const SB_KEY = document.querySelector('meta[name="supabase-key"]')?.content||'';
+
+function loginGoogle(){
+  if(!SB_URL||SB_KEY==='COLE_SUA_ANON_KEY_AQUI'){toast('Configure o Supabase primeiro!');return;}
+  window.location.href=`${SB_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.origin)}`;
+}
+function loginFacebook(){
+  if(!SB_URL||SB_KEY==='COLE_SUA_ANON_KEY_AQUI'){toast('Configure o Supabase primeiro!');return;}
+  window.location.href=`${SB_URL}/auth/v1/authorize?provider=facebook&redirect_to=${encodeURIComponent(window.location.origin)}`;
+}
+async function loginEmail(){
+  const email=sanitize(document.getElementById('login-email').value.trim());
+  const pass=document.getElementById('login-pass').value;
+  if(!email||!pass){toast('Preencha e-mail e senha.');return;}
+  if(SB_KEY==='COLE_SUA_ANON_KEY_AQUI'){toast('Entrando no modo demo...');setTimeout(()=>nav('s-home'),800);return;}
+  try{
+    const res=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email,password:pass})
+    });
+    const data=await res.json();
+    if(data.access_token){
+      sessionStorage.setItem('wander_token',data.access_token);
+      toast('Bem-vindo! ✈️');
+      setTimeout(()=>nav('s-home'),600);
+    }else{toast('E-mail ou senha incorretos.');}
+  }catch(e){toast('Erro ao fazer login.');}
+}
+async function cadastrar(){
+  const nome=sanitize(document.getElementById('cad-nome').value.trim());
+  const email=sanitize(document.getElementById('cad-email').value.trim());
+  const pass=document.getElementById('cad-pass').value;
+  if(!nome||!email||!pass){toast('Preencha todos os campos.');return;}
+  if(pass.length<6){toast('Senha deve ter pelo menos 6 caracteres.');return;}
+  if(SB_KEY==='COLE_SUA_ANON_KEY_AQUI'){toast('Conta demo criada!');setTimeout(()=>nav('s-home'),800);return;}
+  try{
+    const res=await fetch(`${SB_URL}/auth/v1/signup`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email,password:pass,data:{full_name:nome}})
+    });
+    const data=await res.json();
+    if(data.id||data.user){toast('Conta criada! Verifique seu e-mail.');setTimeout(()=>nav('s-login'),1500);}
+    else{toast(data.msg||'Erro ao criar conta.');}
+  }catch(e){toast('Erro ao criar conta.');}
+}
+function showCadastro(){nav('s-cadastro');}
 
 function tTag(el){el.classList.toggle('sel')}
 function selBudget(el){
