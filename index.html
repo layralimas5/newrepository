@@ -270,10 +270,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div style="padding:12px 18px"><div class="srch" style="margin:0"><span style="color:var(--dim);font-size:14px">🔍</span><input placeholder="Buscar destino..." style="background:none;border:none;outline:none;color:var(--text);font-family:var(--ff);font-size:14px;flex:1" oninput="filterDests(this.value)" maxlength="50"/></div></div>
   <div class="chips" id="dest-chips">
     <div class="chip on" onclick="filterChip(this,'Todos')">Todos</div>
+    <div class="chip" onclick="filterChip(this,'Américas')">🇧🇷 Brasil</div>
     <div class="chip" onclick="filterChip(this,'Europa')">Europa</div>
     <div class="chip" onclick="filterChip(this,'Ásia')">Ásia</div>
     <div class="chip" onclick="filterChip(this,'Américas')">Américas</div>
     <div class="chip" onclick="filterChip(this,'África')">África</div>
+    <div class="chip" onclick="filterChip(this,'Oceania')">Oceania</div>
   </div>
   <div style="padding:0 18px" id="dest-list"></div>
 </div>
@@ -328,14 +330,144 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div class="stat"><span class="stat-n">142k</span><div class="stat-l">km voados</div></div>
   </div>
   <div style="border-top:1px solid #ffffff07">
-    <div class="menu-item"><span class="m-ico">❤️</span>Destinos salvos<span class="m-arr">›</span></div>
-    <div class="menu-item"><span class="m-ico">🗺️</span>Meus roteiros<span class="m-arr">›</span></div>
-    <div class="menu-item"><span class="m-ico">📓</span>Diário de viagem<span class="m-arr">›</span></div>
-    <div class="menu-item"><span class="m-ico">⚡</span>Wander Pro<span style="font-size:10px;background:#2a1a00;color:var(--gold);padding:2px 8px;border-radius:8px;margin-left:8px">UPGRADE</span><span class="m-arr">›</span></div>
-    <div class="menu-item"><span class="m-ico">⚙️</span>Configurações<span class="m-arr">›</span></div>
-    <div class="menu-item" style="color:#e87e7e"><span class="m-ico">🚪</span>Sair</div>
+    <div class="menu-item" onclick="nav('s-salvos')"><span class="m-ico">❤️</span>Destinos salvos<span class="m-arr">›</span></div>
+    <div class="menu-item" onclick="nav('s-meus-roteiros')"><span class="m-ico">🗺️</span>Meus roteiros<span class="m-arr">›</span></div>
+    <div class="menu-item" onclick="nav('s-diario')"><span class="m-ico">📓</span>Diário de viagem<span class="m-arr">›</span></div>
+    <div class="menu-item" onclick="nav('s-pro')"><span class="m-ico">⚡</span>Wander Pro<span style="font-size:10px;background:#2a1a00;color:var(--gold);padding:2px 8px;border-radius:8px;margin-left:8px">UPGRADE</span><span class="m-arr">›</span></div>
+    <div class="menu-item" onclick="nav('s-config-user')"><span class="m-ico">⚙️</span>Configurações<span class="m-arr">›</span></div>
+    <div class="menu-item" onclick="nav('s-notif')"><span class="m-ico">🔔</span>Notificações<span id="notif-badge" style="display:none;background:#e87e7e;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:8px">3</span><span class="m-arr">›</span></div>
+    <div class="menu-item" onclick="confirmarSair()" style="color:#e87e7e"><span class="m-ico">🚪</span>Sair</div>
   </div>
   <div style="height:20px"></div>
+</div>
+
+<!-- DESTINOS SALVOS -->
+<div class="scr" id="s-salvos">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Destinos salvos</span></div>
+  <div style="padding:14px 18px 8px"><p style="font-size:12px;color:var(--muted)">Seus destinos favoritos para visitar em breve.</p></div>
+  <div id="salvos-list" style="padding:0 18px"></div>
+</div>
+
+<!-- MEUS ROTEIROS -->
+<div class="scr" id="s-meus-roteiros">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Meus roteiros</span></div>
+  <div style="padding:14px 18px 8px"><p style="font-size:12px;color:var(--muted)">Roteiros que você gerou com a IA.</p></div>
+  <div id="roteiros-list" style="padding:0 18px"></div>
+</div>
+
+<!-- WANDER PRO -->
+<div class="scr" id="s-pro">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Wander Pro</span></div>
+  <div style="padding:28px 18px 0;text-align:center">
+    <div style="font-size:44px;margin-bottom:10px">⚡</div>
+    <div style="font-family:var(--fh);font-size:28px;margin-bottom:8px">Wander Pro</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6">Desbloqueie todo o poder da IA<br>para planejar viagens perfeitas.</div>
+  </div>
+  <div style="margin:0 18px 14px;background:var(--s1);border:1px solid #d4a85330;border-radius:var(--r16);padding:20px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Plano anual — melhor valor</div>
+    <div style="font-size:36px;font-weight:600;color:var(--gold);margin-bottom:4px">R$ 19<span style="font-size:16px;color:var(--muted);font-weight:400">/mês</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:18px">Cobrado anualmente · R$ 228/ano</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Roteiros ilimitados com IA</div>
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Assistente de viagens 24h</div>
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Alertas de preços de voos</div>
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Diário com fotos ilimitadas</div>
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Exportar roteiro em PDF</div>
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Sem anúncios</div>
+    </div>
+    <button onclick="toast('Redirecionando para pagamento...')" style="width:100%;background:linear-gradient(135deg,var(--gold),#b8892e);color:#1a0e00;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--ff)">Assinar Wander Pro →</button>
+  </div>
+  <div style="margin:0 18px 30px;background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);padding:16px">
+    <div style="font-size:13px;font-weight:500;margin-bottom:4px">Plano gratuito atual</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>3 roteiros com IA por mês</div>
+      <div style="display:flex;gap:10px;font-size:13px;align-items:center"><span style="color:var(--mint)">✓</span>Explorar destinos</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--dim);align-items:center"><span>✗</span>Assistente IA ilimitado</div>
+      <div style="display:flex;gap:10px;font-size:13px;color:var(--dim);align-items:center"><span>✗</span>Alertas de preços</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIGURAÇÕES DO USUÁRIO -->
+<div class="scr" id="s-config-user">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title" id="cfg-title">Configurações</span></div>
+  <div style="padding:16px 18px;display:flex;flex-direction:column;gap:2px">
+
+    <!-- TEMA -->
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:8px 0 8px">🎨 Tema</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px" id="tema-grid">
+      <div onclick="setTema('escuro')" style="background:#080c18;border:2px solid var(--gold);border-radius:var(--r8);padding:14px 8px;text-align:center;cursor:pointer">
+        <div style="font-size:20px;margin-bottom:6px">🌙</div>
+        <div style="font-size:11px;font-weight:500;color:var(--gold)">Escuro</div>
+      </div>
+      <div onclick="setTema('claro')" style="background:#f8f7f4;border:1px solid #e2e0d8;border-radius:var(--r8);padding:14px 8px;text-align:center;cursor:pointer">
+        <div style="font-size:20px;margin-bottom:6px">☀️</div>
+        <div style="font-size:11px;font-weight:500;color:#1a1a18">Claro</div>
+      </div>
+      <div onclick="setTema('azul')" style="background:#0a1628;border:1px solid #1e3a5f;border-radius:var(--r8);padding:14px 8px;text-align:center;cursor:pointer">
+        <div style="font-size:20px;margin-bottom:6px">🌊</div>
+        <div style="font-size:11px;font-weight:500;color:#5ca8e8">Ocean</div>
+      </div>
+      <div onclick="setTema('verde')" style="background:#0a1a0a;border:1px solid #1a3a1a;border-radius:var(--r8);padding:14px 8px;text-align:center;cursor:pointer">
+        <div style="font-size:20px;margin-bottom:6px">🌿</div>
+        <div style="font-size:11px;font-weight:500;color:#4ecba8">Floresta</div>
+      </div>
+      <div onclick="setTema('roxo')" style="background:#0f0a1e;border:1px solid #2d1a5c;border-radius:var(--r8);padding:14px 8px;text-align:center;cursor:pointer">
+        <div style="font-size:20px;margin-bottom:6px">🔮</div>
+        <div style="font-size:11px;font-weight:500;color:#a07fe8">Galáxia</div>
+      </div>
+      <div onclick="setTema('rosa')" style="background:#1a0a12;border:1px solid #3a1a28;border-radius:var(--r8);padding:14px 8px;text-align:center;cursor:pointer">
+        <div style="font-size:20px;margin-bottom:6px">🌸</div>
+        <div style="font-size:11px;font-weight:500;color:#e87eb8">Rose</div>
+      </div>
+    </div>
+
+    <!-- IDIOMA -->
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:8px 0 8px">🌐 Idioma</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      <div onclick="setIdioma('pt')" id="lang-pt" style="background:var(--s1);border:2px solid var(--gold);border-radius:var(--r8);padding:12px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="font-size:20px">🇧🇷</span><span style="font-size:13px;font-weight:500">Português</span>
+      </div>
+      <div onclick="setIdioma('en')" id="lang-en" style="background:var(--s1);border:1px solid #ffffff15;border-radius:var(--r8);padding:12px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="font-size:20px">🇺🇸</span><span style="font-size:13px;font-weight:500">English</span>
+      </div>
+      <div onclick="setIdioma('es')" id="lang-es" style="background:var(--s1);border:1px solid #ffffff15;border-radius:var(--r8);padding:12px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="font-size:20px">🇪🇸</span><span style="font-size:13px;font-weight:500">Español</span>
+      </div>
+      <div onclick="setIdioma('fr')" id="lang-fr" style="background:var(--s1);border:1px solid #ffffff15;border-radius:var(--r8);padding:12px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="font-size:20px">🇫🇷</span><span style="font-size:13px;font-weight:500">Français</span>
+      </div>
+    </div>
+
+    <!-- CONTA -->
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:8px 0 6px">👤 Conta</div>
+    <div class="menu-item" style="border:1px solid #ffffff08;border-radius:var(--r8);margin-bottom:4px" onclick="toast('Em breve!')"><span class="m-ico">👤</span><span id="lbl-editperfil">Editar perfil</span><span class="m-arr">›</span></div>
+    <div class="menu-item" style="border:1px solid #ffffff08;border-radius:var(--r8);margin-bottom:4px" onclick="toast('Em breve!')"><span class="m-ico">🔑</span><span id="lbl-senha">Alterar senha</span><span class="m-arr">›</span></div>
+    <div class="menu-item" style="border:1px solid #ffffff08;border-radius:var(--r8);margin-bottom:16px" onclick="toast('Em breve!')"><span class="m-ico">📧</span><span id="lbl-email">Alterar e-mail</span><span class="m-arr">›</span></div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:8px 0 6px" id="lbl-notif-sec">🔔 Notificações</div>
+    <div style="background:var(--s1);border:1px solid #ffffff08;border-radius:var(--r8);padding:14px 16px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:13px;font-weight:500" id="lbl-alertas">Alertas de preços</div><div style="font-size:11px;color:var(--muted)" id="lbl-alertas-sub">Avisar quando baixar o preço</div></div>
+      <div style="width:34px;height:18px;background:var(--mint);border-radius:9px;cursor:pointer;position:relative" onclick="this.style.background=this.style.background===''||this.style.background==='rgb(78, 203, 168)'?'var(--dim)':'var(--mint)'"><div style="position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;right:3px"></div></div>
+    </div>
+    <div style="background:var(--s1);border:1px solid #ffffff08;border-radius:var(--r8);padding:14px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:13px;font-weight:500" id="lbl-novidades">Novidades do app</div><div style="font-size:11px;color:var(--muted)" id="lbl-novidades-sub">Atualizações e dicas</div></div>
+      <div style="width:34px;height:18px;background:var(--mint);border-radius:9px;cursor:pointer;position:relative"><div style="position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:3px;right:3px"></div></div>
+    </div>
+
+    <!-- PERIGO -->
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:8px 0 6px">⚠️ Zona de perigo</div>
+    <div class="menu-item" style="border:1px solid #e87e7e30;border-radius:var(--r8);color:#e87e7e" onclick="toast('Entre em contato: suporte@wanderapp.com.br')"><span class="m-ico">🗑️</span><span id="lbl-excluir">Excluir minha conta</span></div>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- NOTIFICAÇÕES -->
+<div class="scr" id="s-notif">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title">Notificações</span><span style="font-size:12px;color:var(--gold);cursor:pointer" onclick="marcarTodasLidas()">Marcar todas lidas</span></div>
+  <div id="notif-list" style="padding:12px 18px;display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
 <!-- TELA DE LOGIN -->
@@ -368,6 +500,27 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       Não tem conta? <span onclick="showCadastro()" style="color:var(--gold);cursor:pointer">Criar grátis</span>
     </div>
   </div>
+<!-- DETALHE DO DESTINO COM LINKS REAIS -->
+<div class="scr" id="s-destino-detalhe">
+  <div class="topbar"><button class="back-btn" onclick="back()">←</button><span class="page-title" id="dd-title">Destino</span><span style="font-size:18px;cursor:pointer" onclick="salvarDestino()">❤️</span></div>
+  <div style="padding:14px 18px 0">
+    <div style="font-size:24px;margin-bottom:4px" id="dd-ico"></div>
+    <div style="font-family:var(--fh);font-size:26px;margin-bottom:2px" id="dd-name"></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px" id="dd-country"></div>
+    <!-- RESERVAR HOTÉIS -->
+    <div style="font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">🏨 Reservar hotéis</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px" id="dd-hotels"></div>
+    <!-- PASSAGENS -->
+    <div style="font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">✈️ Buscar passagens</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px" id="dd-flights"></div>
+    <!-- RESTAURANTES -->
+    <div style="font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">🍽️ Restaurantes e experiências</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px" id="dd-food"></div>
+    <!-- PLANEJAR -->
+    <button onclick="preencherDestino()" style="width:100%;background:linear-gradient(135deg,var(--gold),#b8892e);color:#1a0e00;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--ff);margin-bottom:20px">✨ Criar roteiro com IA para este destino →</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 </div>
 
@@ -413,18 +566,64 @@ const DESTS=[
   {name:'Buenos Aires',region:'Américas',country:'Argentina',ico:'🥩',tags:['Tango','Gastronomia','Arte'],price:'R$ 4.200',bg:'#2a1a2a'},
   {name:'Lisboa',region:'Europa',country:'Portugal',ico:'🏰',tags:['História','Gastronomia','Mar'],price:'R$ 5.900',bg:'#1a1a3a'},
   {name:'Bangkok',region:'Ásia',country:'Tailândia',ico:'🛕',tags:['Templos','Comida','Praias'],price:'R$ 6.400',bg:'#2a1a00'},
+  {name:'Rio de Janeiro',region:'Américas',country:'Brasil',ico:'🏖️',tags:['Praia','Carnaval','Natureza'],price:'R$ 800',bg:'#1a3a1a'},
+  {name:'São Paulo',region:'Américas',country:'Brasil',ico:'🏙️',tags:['Negócios','Gastronomia','Cultura'],price:'R$ 600',bg:'#1a1a2a'},
+  {name:'Salvador',region:'Américas',country:'Brasil',ico:'🎭',tags:['Cultura','Praia','História'],price:'R$ 700',bg:'#2a1a00'},
+  {name:'Florianópolis',region:'Américas',country:'Brasil',ico:'🌊',tags:['Praia','Natureza','Surf'],price:'R$ 750',bg:'#0a2a3a'},
+  {name:'Gramado',region:'Américas',country:'Brasil',ico:'🍫',tags:['Frio','Gastronomia','Romântico'],price:'R$ 650',bg:'#1a2a1a'},
+  {name:'Foz do Iguaçu',region:'Américas',country:'Brasil',ico:'💧',tags:['Natureza','Aventura','Família'],price:'R$ 700',bg:'#0a2a1a'},
+  {name:'Manaus',region:'Américas',country:'Brasil',ico:'🌿',tags:['Amazônia','Natureza','Ecoturismo'],price:'R$ 900',bg:'#0a2a0a'},
+  {name:'Fortaleza',region:'Américas',country:'Brasil',ico:'☀️',tags:['Praia','Sol','Kitesurf'],price:'R$ 680',bg:'#2a1a00'},
+  {name:'Recife',region:'Américas',country:'Brasil',ico:'🦀',tags:['Praia','Cultura','Gastronomia'],price:'R$ 660',bg:'#2a0a0a'},
+  {name:'Natal',region:'Américas',country:'Brasil',ico:'🏜️',tags:['Dunas','Praia','Buggy'],price:'R$ 640',bg:'#2a1a00'},
+  {name:'Amsterdam',region:'Europa',country:'Holanda',ico:'🌷',tags:['Bicicleta','Museus','Canais'],price:'R$ 7.900',bg:'#0a1a2a'},
+  {name:'Barcelona',region:'Europa',country:'Espanha',ico:'🏖️',tags:['Praia','Arte','Gaudi'],price:'R$ 7.200',bg:'#2a1a00'},
+  {name:'Madri',region:'Europa',country:'Espanha',ico:'🐂',tags:['Arte','Gastronomia','Futebol'],price:'R$ 6.900',bg:'#2a0a0a'},
+  {name:'Londres',region:'Europa',country:'Reino Unido',ico:'🎡',tags:['História','Museus','Teatro'],price:'R$ 8.100',bg:'#1a1a2a'},
+  {name:'Berlim',region:'Europa',country:'Alemanha',ico:'🎨',tags:['Arte','História','Noturno'],price:'R$ 7.400',bg:'#1a1a1a'},
+  {name:'Praga',region:'Europa',country:'República Tcheca',ico:'🏰',tags:['Medieval','Cerveja','Arquitetura'],price:'R$ 6.200',bg:'#1a1a2a'},
+  {name:'Dubai',region:'Ásia',country:'Emirados Árabes',ico:'🌆',tags:['Luxo','Compras','Deserto'],price:'R$ 8.800',bg:'#2a1a00'},
+  {name:'Bali',region:'Ásia',country:'Indonésia',ico:'🌺',tags:['Surf','Templos','Natureza'],price:'R$ 7.100',bg:'#1a2a00'},
+  {name:'Singapura',region:'Ásia',country:'Singapura',ico:'🦁',tags:['Moderno','Gastronomia','Compras'],price:'R$ 9.500',bg:'#0a1a2a'},
+  {name:'Istambul',region:'Ásia',country:'Turquia',ico:'🕌',tags:['História','Gastronomia','Cultura'],price:'R$ 6.600',bg:'#2a1a00'},
+  {name:'Cancún',region:'Américas',country:'México',ico:'🏝️',tags:['Praia','Ruins Maias','Mergulho'],price:'R$ 5.800',bg:'#0a2a2a'},
+  {name:'Nova Orleans',region:'Américas',country:'EUA',ico:'🎷',tags:['Jazz','Gastronomia','Carnaval'],price:'R$ 7.600',bg:'#2a1a00'},
+  {name:'Santiago',region:'Américas',country:'Chile',ico:'🏔️',tags:['Vinho','Natureza','Ski'],price:'R$ 4.800',bg:'#1a1a2a'},
+  {name:'Lima',region:'Américas',country:'Peru',ico:'🦙',tags:['Gastronomia','História','Cultura'],price:'R$ 4.500',bg:'#2a1a00'},
+  {name:'Cidade do Cabo',region:'África',country:'África do Sul',ico:'🏔️',tags:['Natureza','Vinho','Safari'],price:'R$ 9.800',bg:'#1a2a1a'},
+  {name:'Marrakech',region:'África',country:'Marrocos',ico:'🕌',tags:['Souks','Cultura','Deserto'],price:'R$ 5.400',bg:'#2a1a00'},
+  {name:'Cairo',region:'África',country:'Egito',ico:'🐪',tags:['Pirâmides','História','Cultura'],price:'R$ 5.900',bg:'#2a1a00'},
+  {name:'Seul',region:'Ásia',country:'Coreia do Sul',ico:'🎎',tags:['K-Pop','Tecnologia','Gastronomia'],price:'R$ 8.700',bg:'#1a1a2a'},
+  {name:'Viena',region:'Europa',country:'Áustria',ico:'🎼',tags:['Música','Arte','Arquitetura'],price:'R$ 7.600',bg:'#1a1a2a'},
+  {name:'Zurique',region:'Europa',country:'Suíça',ico:'🏔️',tags:['Natureza','Relógios','Chocolate'],price:'R$ 10.200',bg:'#1a2a2a'},
+  {name:'Reykjavik',region:'Europa',country:'Islândia',ico:'🌌',tags:['Aurora Boreal','Natureza','Vulcões'],price:'R$ 11.500',bg:'#0a0a2a'},
 ];
 
 // Renomear para não conflitar com window.history
 let navHistory=[];
 let currentChip='Todos';
 
+function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' '); }
+
 function renderDests(filter='',chip='Todos'){
   const list=document.getElementById('dest-list');
-  const filtered=DESTS.filter(d=>(chip==='Todos'||d.region===chip)&&(!filter||d.name.toLowerCase().includes(filter.toLowerCase())||d.country.toLowerCase().includes(filter.toLowerCase())));
-  // SEGURANÇA: usando textContent em vez de innerHTML onde possível
+  const q=norm(filter.trim());
+  const filtered=DESTS.filter(d=>{
+    const matchChip=chip==='Todos'||d.region===chip;
+    if(!matchChip) return false;
+    if(!q) return true;
+    return norm(d.name).includes(q)||
+      norm(d.country).includes(q)||
+      norm(d.region).includes(q)||
+      d.tags.some(t=>norm(t).includes(q))||
+      (d.alias&&norm(d.alias).includes(q));
+  });
+  if(filtered.length===0){
+    list.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--muted)"><div style="font-size:32px;margin-bottom:8px">🔍</div><div style="font-size:14px">Nenhum destino encontrado para "${sanitize(filter)}"</div><div style="font-size:12px;margin-top:4px">Tente "paris", "brasil", "praia"...</div><button onclick="nav('s-planner')" style="margin-top:14px;background:var(--gold);color:#1a0e00;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--ff)">✨ Criar roteiro com IA</button></div>`;
+    return;
+  }
   list.innerHTML=filtered.map(d=>`
-    <div class="dl-card" onclick="nav('s-planner')">
+    <div class="dl-card" onclick="abrirDestino('${sanitize(d.name)}','${sanitize(d.country)}')">
       <div class="dl-ico" style="background:${d.bg}">${d.ico}</div>
       <div style="flex:1;min-width:0">
         <div class="dl-name">${sanitize(d.name)}</div>
@@ -528,6 +727,314 @@ async function cadastrar(){
   }catch(e){toast('Erro ao criar conta.');}
 }
 function showCadastro(){nav('s-cadastro');}
+
+// ============================================================
+// DESTINO DETALHE — Links reais de reserva
+// ============================================================
+let destinoAtual = {name:'', country:''};
+
+function abrirDestino(name, country){
+  destinoAtual = {name, country};
+  const dest = DESTS.find(d=>d.name===name);
+  document.getElementById('dd-title').textContent = name;
+  document.getElementById('dd-ico').textContent = dest?.ico||'🌍';
+  document.getElementById('dd-name').textContent = name;
+  document.getElementById('dd-country').textContent = (dest?.country||country)+' · '+(dest?.region||'');
+
+  const q = encodeURIComponent(name);
+  const qEn = encodeURIComponent(name.normalize('NFD').replace(/[\u0300-\u036f]/g,''));
+
+  // Hotéis
+  document.getElementById('dd-hotels').innerHTML = [
+    {nome:'Booking.com', ico:'🏨', url:`https://www.booking.com/search.html?ss=${q}`, cor:'#003580'},
+    {nome:'Airbnb', ico:'🏠', url:`https://www.airbnb.com.br/s/${q}/homes`, cor:'#ff5a5f'},
+    {nome:'Hotels.com', ico:'🛎️', url:`https://br.hotels.com/search.do?q-destination=${q}`, cor:'#c8102e'},
+    {nome:'Trivago', ico:'🔍', url:`https://www.trivago.com.br/?search=${q}`, cor:'#007db8'},
+  ].map(s=>`<a href="${s.url}" target="_blank" style="background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r8);padding:12px;text-align:center;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s" onmouseover="this.style.borderColor='#ffffff25'" onmouseout="this.style.borderColor='#ffffff0e'"><span style="font-size:20px">${s.ico}</span><span style="font-size:11px;font-weight:500">${s.nome}</span></a>`).join('');
+
+  // Passagens
+  document.getElementById('dd-flights').innerHTML = [
+    {nome:'Google Flights', ico:'✈️', url:`https://www.google.com/travel/flights?q=voos+para+${q}`},
+    {nome:'Decolar', ico:'🛫', url:`https://www.decolar.com/passagens-aereas/result/${qEn}`},
+    {nome:'Skyscanner', ico:'🔎', url:`https://www.skyscanner.com.br/transport/flights/bra/${qEn}/`},
+    {nome:'Latam', ico:'🛬', url:`https://www.latamairlines.com/br/pt/ofertas?origen=SAO&destino=${qEn}`},
+  ].map(s=>`<a href="${s.url}" target="_blank" style="background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r8);padding:12px;text-align:center;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:6px" onmouseover="this.style.borderColor='#ffffff25'" onmouseout="this.style.borderColor='#ffffff0e'"><span style="font-size:20px">${s.ico}</span><span style="font-size:11px;font-weight:500">${s.nome}</span></a>`).join('');
+
+  // Restaurantes
+  document.getElementById('dd-food').innerHTML = [
+    {nome:'TripAdvisor', ico:'🍽️', url:`https://www.tripadvisor.com.br/Restaurants-g-${q}.html`},
+    {nome:'GetYourGuide', ico:'🎭', url:`https://www.getyourguide.com.br/s/?q=${q}`},
+    {nome:'Viator', ico:'🎫', url:`https://www.viator.com/pt-BR/search?text=${q}`},
+    {nome:'Google Maps', ico:'📍', url:`https://www.google.com/maps/search/restaurantes+em+${q}`},
+  ].map(s=>`<a href="${s.url}" target="_blank" style="background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r8);padding:12px;text-align:center;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:6px" onmouseover="this.style.borderColor='#ffffff25'" onmouseout="this.style.borderColor='#ffffff0e'"><span style="font-size:20px">${s.ico}</span><span style="font-size:11px;font-weight:500">${s.nome}</span></a>`).join('');
+
+  nav('s-destino-detalhe');
+}
+
+function preencherDestino(){
+  document.getElementById('pl-dest').value = destinoAtual.name;
+  nav('s-planner');
+}
+
+function salvarDestino(){
+  const salvos = JSON.parse(localStorage.getItem('wander_salvos')||'[]');
+  if(!salvos.includes(destinoAtual.name)){
+    salvos.push(destinoAtual.name);
+    localStorage.setItem('wander_salvos', JSON.stringify(salvos));
+    toast('❤️ '+destinoAtual.name+' salvo!');
+    renderSalvos();
+  } else {
+    toast('Já está nos seus salvos!');
+  }
+}
+
+function renderSalvos(){
+  const salvos = JSON.parse(localStorage.getItem('wander_salvos')||'[]');
+  const el = document.getElementById('salvos-list');
+  if(!el) return;
+  if(salvos.length===0){
+    el.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--muted)"><div style="font-size:32px;margin-bottom:8px">❤️</div><div style="font-size:14px">Nenhum destino salvo ainda</div><div style="font-size:12px;margin-top:4px">Explore destinos e salve seus favoritos</div></div>`;
+    return;
+  }
+  el.innerHTML = salvos.map(name=>{
+    const d = DESTS.find(x=>x.name===name);
+    if(!d) return '';
+    return `<div class="dl-card" style="margin-bottom:11px" onclick="abrirDestino('${sanitize(d.name)}','${sanitize(d.country)}')">
+      <div class="dl-ico" style="background:${d.bg}">${d.ico}</div>
+      <div style="flex:1;min-width:0"><div class="dl-name">${sanitize(d.name)}</div><div class="dl-meta">${sanitize(d.country)}</div></div>
+      <div style="color:#e87e7e;font-size:18px;cursor:pointer" onclick="event.stopPropagation();removerSalvo('${sanitize(d.name)}')">❤️</div>
+    </div>`;
+  }).join('');
+}
+
+function removerSalvo(name){
+  let salvos = JSON.parse(localStorage.getItem('wander_salvos')||'[]');
+  salvos = salvos.filter(s=>s!==name);
+  localStorage.setItem('wander_salvos', JSON.stringify(salvos));
+  renderSalvos();
+  toast('Removido dos salvos');
+}
+
+// ============================================================
+// MEUS ROTEIROS — salvos localmente
+// ============================================================
+function renderMeusRoteiros(){
+  const el = document.getElementById('roteiros-list');
+  if(!el) return;
+  const roteiros = JSON.parse(localStorage.getItem('wander_roteiros')||'[]');
+  if(roteiros.length===0){
+    el.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--muted)"><div style="font-size:32px;margin-bottom:8px">🗺️</div><div style="font-size:14px">Nenhum roteiro salvo ainda</div><div style="font-size:12px;margin-top:4px">Gere um roteiro com IA e salve</div><button onclick="nav('s-planner')" style="margin-top:14px;background:var(--gold);color:#1a0e00;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--ff)">✨ Criar roteiro</button></div>`;
+    return;
+  }
+  el.innerHTML = roteiros.map((r,i)=>`
+    <div style="background:var(--s1);border:1px solid #ffffff0e;border-radius:var(--r12);padding:14px;margin-bottom:12px;cursor:pointer" onclick="toast('Abrindo roteiro...')">
+      <div style="font-family:var(--fh);font-size:18px;margin-bottom:4px">${sanitize(r.titulo||r.destino)}</div>
+      <div style="font-size:12px;color:var(--muted)">${r.dias||7} dias · ${sanitize(r.budget||'Moderado')}</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:4px">${r.data||'Recente'}</div>
+    </div>`).join('');
+}
+
+// ============================================================
+// NOTIFICAÇÕES
+// ============================================================
+const NOTIFICACOES = [
+  {id:1, ico:'✈️', titulo:'Passagem para Paris caiu!', texto:'O preço baixou de R$ 8.200 para R$ 7.400. Aproveite!', tempo:'há 2h', lida:false},
+  {id:2, ico:'🗺️', titulo:'Seu roteiro está pronto', texto:'O roteiro para Japão 14 dias foi gerado com sucesso.', tempo:'há 5h', lida:false},
+  {id:3, ico:'⚡', titulo:'Experimente o Wander Pro', texto:'Desbloqueie roteiros ilimitados por R$ 19/mês.', tempo:'há 1d', lida:false},
+  {id:4, ico:'🏖️', titulo:'Florianópolis em alta', texto:'13 usuários criaram roteiros para Floripa esta semana!', tempo:'há 2d', lida:true},
+];
+
+let notificacoes = [...NOTIFICACOES];
+
+function renderNotificacoes(){
+  const el = document.getElementById('notif-list');
+  if(!el) return;
+  const naoLidas = notificacoes.filter(n=>!n.lida).length;
+  const badge = document.getElementById('notif-badge');
+  if(badge){ badge.style.display = naoLidas>0?'inline':'none'; badge.textContent=naoLidas; }
+  el.innerHTML = notificacoes.map(n=>`
+    <div style="background:${n.lida?'var(--s1)':'var(--s2)'};border:1px solid ${n.lida?'#ffffff0e':'#d4a85330'};border-radius:var(--r12);padding:14px;display:flex;gap:12px;cursor:pointer" onclick="marcarLida(${n.id})">
+      <div style="font-size:22px;flex-shrink:0">${n.ico}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:${n.lida?'400':'500'};margin-bottom:3px">${sanitize(n.titulo)}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;line-height:1.4">${sanitize(n.texto)}</div>
+        <div style="font-size:10px;color:var(--dim)">${sanitize(n.tempo)}</div>
+      </div>
+      ${!n.lida?'<div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px"></div>':''}
+    </div>`).join('');
+}
+
+function marcarLida(id){
+  notificacoes = notificacoes.map(n=>n.id===id?{...n,lida:true}:n);
+  renderNotificacoes();
+}
+
+function marcarTodasLidas(){
+  notificacoes = notificacoes.map(n=>({...n,lida:true}));
+  renderNotificacoes();
+  toast('Todas as notificações lidas');
+}
+
+// ============================================================
+// SAIR
+// ============================================================
+// ============================================================
+// TEMAS
+// ============================================================
+const TEMAS = {
+  escuro: {bg:'#080c18',s1:'#0f1624',s2:'#161f30',text:'#eceae4',muted:'#7a869c',dim:'#4a5568',gold:'#d4a853',gold2:'#f0c97a',mint:'#4ecba8'},
+  claro:  {bg:'#f8f7f4',s1:'#ffffff',s2:'#f1efe8',text:'#1a1a18',muted:'#6b6b66',dim:'#a8a8a2',gold:'#b8892e',gold2:'#d4a853',mint:'#2d7a4f'},
+  azul:   {bg:'#060d1a',s1:'#0a1628',s2:'#0f1e35',text:'#e0eaf8',muted:'#6b8aaa',dim:'#3a5070',gold:'#5ca8e8',gold2:'#7cc4ff',mint:'#4ecba8'},
+  verde:  {bg:'#060f06',s1:'#0a180a',s2:'#0f220f',text:'#e0f0e0',muted:'#6a8a6a',dim:'#3a5a3a',gold:'#4ecba8',gold2:'#7ee8c8',mint:'#d4a853'},
+  roxo:   {bg:'#08060f',s1:'#100a20',s2:'#180f30',text:'#e8e0f8',muted:'#8a6aaa',dim:'#4a3a6a',gold:'#a07fe8',gold2:'#c0a0ff',mint:'#e87eb8'},
+  rosa:   {bg:'#120008',s1:'#1e0012',s2:'#2a001a',text:'#f8e0ee',muted:'#aa6a8a',dim:'#6a3a52',gold:'#e87eb8',gold2:'#ffaad4',mint:'#d4a853'},
+};
+
+function setTema(nome){
+  const t = TEMAS[nome] || TEMAS.escuro;
+  const r = document.documentElement.style;
+  r.setProperty('--bg', t.bg);
+  r.setProperty('--s1', t.s1);
+  r.setProperty('--s2', t.s2);
+  r.setProperty('--text', t.text);
+  r.setProperty('--muted', t.muted);
+  r.setProperty('--dim', t.dim);
+  r.setProperty('--gold', t.gold);
+  r.setProperty('--gold2', t.gold2);
+  r.setProperty('--mint', t.mint);
+  localStorage.setItem('wander_tema', nome);
+  // Atualiza borda do tema selecionado
+  document.querySelectorAll('#tema-grid > div').forEach(d => d.style.borderWidth='1px');
+  event?.currentTarget?.style && (event.currentTarget.style.borderWidth='2px');
+  toast('Tema '+ nome +' aplicado! ✨');
+}
+
+// Aplicar tema salvo ao carregar
+const temaSalvo = localStorage.getItem('wander_tema');
+if(temaSalvo && TEMAS[temaSalvo]) setTimeout(()=>setTema(temaSalvo), 100);
+
+// ============================================================
+// IDIOMAS
+// ============================================================
+const I18N = {
+  pt: {
+    inicio:'Início', destinos:'Destinos', planejar:'Planejar', diario:'Diário', ia:'IA',
+    configuracoes:'Configurações', bomdiaUser:'Bom dia', heroSub:'Para onde vai sua',
+    heroH:'próxima aventura?', heroP:'Roteiros com IA, comparador de preços, diário de memórias.',
+    buscarPlaceholder:'Destino, país, experiência...',
+    criarRoteiro:'Criar meu roteiro com IA →',
+    destinosAlta:'Destinos em alta', verTodos:'Ver todos',
+    ferramentas:'Ferramentas', compararPrecos:'Comparar preços',
+    assistenteIA:'Assistente IA', tireDuvidas:'Tire dúvidas',
+    editperfil:'Editar perfil', senha:'Alterar senha', email:'Alterar e-mail',
+    alertas:'Alertas de preços', alertasSub:'Avisar quando baixar o preço',
+    novidades:'Novidades do app', novidadesSub:'Atualizações e dicas',
+    excluir:'Excluir minha conta', cfgTitle:'Configurações',
+  },
+  en: {
+    inicio:'Home', destinos:'Explore', planejar:'Plan', diario:'Journal', ia:'AI',
+    configuracoes:'Settings', bomdiaUser:'Good morning', heroSub:'Where is your',
+    heroH:'next adventure?', heroP:'AI itineraries, price comparison, travel diary.',
+    buscarPlaceholder:'Destination, country, experience...',
+    criarRoteiro:'Create my AI itinerary →',
+    destinosAlta:'Trending destinations', verTodos:'See all',
+    ferramentas:'Tools', compararPrecos:'Compare prices',
+    assistenteIA:'AI Assistant', tireDuvidas:'Ask anything',
+    editperfil:'Edit profile', senha:'Change password', email:'Change email',
+    alertas:'Price alerts', alertasSub:'Notify when price drops',
+    novidades:'App news', novidadesSub:'Updates and tips',
+    excluir:'Delete my account', cfgTitle:'Settings',
+  },
+  es: {
+    inicio:'Inicio', destinos:'Explorar', planejar:'Planear', diario:'Diario', ia:'IA',
+    configuracoes:'Configuración', bomdiaUser:'Buenos días', heroSub:'¿A dónde va tu',
+    heroH:'próxima aventura?', heroP:'Itinerarios con IA, comparador de precios, diario de viajes.',
+    buscarPlaceholder:'Destino, país, experiencia...',
+    criarRoteiro:'Crear mi itinerario con IA →',
+    destinosAlta:'Destinos de moda', verTodos:'Ver todos',
+    ferramentas:'Herramientas', compararPrecos:'Comparar precios',
+    assistenteIA:'Asistente IA', tireDuvidas:'Haz preguntas',
+    editperfil:'Editar perfil', senha:'Cambiar contraseña', email:'Cambiar email',
+    alertas:'Alertas de precios', alertasSub:'Avisar cuando baje el precio',
+    novidades:'Novedades', novidadesSub:'Actualizaciones y consejos',
+    excluir:'Eliminar mi cuenta', cfgTitle:'Configuración',
+  },
+  fr: {
+    inicio:'Accueil', destinos:'Explorer', planejar:'Planifier', diario:'Journal', ia:'IA',
+    configuracoes:'Paramètres', bomdiaUser:'Bonjour', heroSub:'Où est votre',
+    heroH:'prochaine aventure?', heroP:'Itinéraires IA, comparateur de prix, journal de voyage.',
+    buscarPlaceholder:'Destination, pays, expérience...',
+    criarRoteiro:'Créer mon itinéraire IA →',
+    destinosAlta:'Destinations tendance', verTodos:'Voir tout',
+    ferramentas:'Outils', compararPrecos:'Comparer les prix',
+    assistenteIA:'Assistant IA', tireDuvidas:'Posez des questions',
+    editperfil:'Modifier le profil', senha:'Changer mot de passe', email:'Changer email',
+    alertas:'Alertes de prix', alertasSub:'Notifier quand le prix baisse',
+    novidades:"Nouvelles de l'app", novidadesSub:'Mises à jour et conseils',
+    excluir:'Supprimer mon compte', cfgTitle:'Paramètres',
+  },
+};
+
+let idiomaAtual = localStorage.getItem('wander_idioma') || 'pt';
+
+function setIdioma(lang){
+  idiomaAtual = lang;
+  localStorage.setItem('wander_idioma', lang);
+  const t = I18N[lang] || I18N.pt;
+
+  // Atualiza textos no app
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('cfg-title', t.cfgTitle);
+  set('lbl-editperfil', t.editperfil);
+  set('lbl-senha', t.senha);
+  set('lbl-email', t.email);
+  set('lbl-alertas', t.alertas);
+  set('lbl-alertas-sub', t.alertasSub);
+  set('lbl-novidades', t.novidades);
+  set('lbl-novidades-sub', t.novidadesSub);
+  set('lbl-excluir', t.excluir);
+
+  // Atualiza bottom nav
+  const bnis = document.querySelectorAll('.bni');
+  const labels = [t.inicio, t.destinos, t.planejar, t.diario, t.ia];
+  bnis.forEach((b,i) => { const txt=b.lastChild; if(txt&&txt.nodeType===3) txt.textContent=labels[i]||''; });
+
+  // Atualiza borda do idioma selecionado
+  ['pt','en','es','fr'].forEach(l => {
+    const el = document.getElementById('lang-'+l);
+    if(el) el.style.border = l===lang ? '2px solid var(--gold)' : '1px solid #ffffff15';
+  });
+
+  toast(lang==='pt'?'Idioma: Português 🇧🇷':lang==='en'?'Language: English 🇺🇸':lang==='es'?'Idioma: Español 🇪🇸':'Langue: Français 🇫🇷');
+}
+
+// Aplicar idioma salvo ao carregar
+setTimeout(()=>{ if(idiomaAtual!=='pt') setIdioma(idiomaAtual); }, 200);
+
+function confirmarSair(){
+  if(confirm('Deseja sair da sua conta?')){
+    sessionStorage.removeItem('wander_token');
+    sessionStorage.removeItem('wander_user');
+    toast('Até logo! 👋');
+    setTimeout(()=>nav('s-home'), 800);
+  }
+}
+
+// Renderizar ao entrar nas telas
+const _navOrig = nav;
+function nav(id){
+  _navOrig(id);
+  if(id==='s-salvos') setTimeout(renderSalvos,100);
+  if(id==='s-meus-roteiros') setTimeout(renderMeusRoteiros,100);
+  if(id==='s-notif') setTimeout(renderNotificacoes,100);
+}
+
+// Inicializar badge de notificações
+setTimeout(()=>{
+  const naoLidas = notificacoes.filter(n=>!n.lida).length;
+  const badge = document.getElementById('notif-badge');
+  if(badge && naoLidas>0){ badge.style.display='inline'; badge.textContent=naoLidas; }
+},500);
 
 function tTag(el){el.classList.toggle('sel')}
 function selBudget(el){
